@@ -16,7 +16,7 @@ This file is the new-work record judges are asked to check. Anything not listed 
 - `docs/PLAN.md`, `docs/API.md`, `docs/TEAM.md`, `docs/smoke-test-checklist.md`, `test/smoke-test.mjs` — plan, API inventory, team onboarding, smoke checklist, and mock smoke test, all built Oct 26, 2026.
 - `docs/RULES_ADHERENCE_AGENT.md`, `test/rules-check.mjs` — Rules Adherence Agent and pre-commit scan, built Oct 26, 2026. The agent gates every commit, demo, and submission against disqualification risks (new-work-only, Meta tooling, secrets, false claims, label discipline); scan PASS on first run, 10 files scanned.
 - `docs/CREATIVE_AND_COMMUNITY_GUARDRAILS.md` — Creative + community-vote guardrails, built Oct 26, 2026. Creative bonus and community-vote bonus ($5k / $10k per guide) chased only with truth guardrails: generated ≠ data, no vote manipulation, no vote ask before voting opens, Discord post gate before every paste.
-- Live smoke tests Oct 26: Muse Spark 1.3 and Muse Image 1.0, with receipts recorded in `docs/API.md`. SAM hosted smoke test is not yet run and is not claimed.
+- Live smoke tests Oct 26: Muse Spark 1.3 and Muse Image 1.0, with receipts recorded in `docs/API.md`. SAM 3.1 hosted image smoke test PASS Oct 26 (1 box, 1 mask, Completed, 2.7s, receipt in `docs/API.md`); SAM hosted video smoke test is not yet run and is not claimed.
 
 ## Predates the hackathon (not claimed as hackathon-built)
 

@@ -9,12 +9,12 @@ Meta Model API connection. No keys in this repo.
 |---|---|---|
 | `muse-spark-1.3` (standard) | Briefing brain: plans and writes the AOI briefing, with receipts | PASS. Request chatcmpl-01a17967-8b87-73a0-a49b-5dc11747e28f, 46 prompt / 217 completion (163 reasoning) / 263 total, 2-sentence Bonin briefing, forecast language only |
 | `muse-image-1.0` | Briefing visual, one per AOI | PASS. Status 200, 442K WebP saved. Output is GENERATED VISUAL, labelled as such, never data |
+| `sam-3.1` | Human visual bridge: segment an AOI for a human reader | PASS (image path, Oct 26). Responses API, model `sam-3.1`, prompt `person`, public Pexels stock photo (person standing outdoors), stream=True, metadata mask_encoding one_bit, parser `meta-sam-parser` 0.0.5 with `image_segmentation_format()`. Outcome Completed, diagnostics empty, 2.7s, 1 box [231,403,264,558], 1 mask 33x155, 3076 mask pixels. Video path is documented (input_video + video_segmentation_format, 15,000 frames / 16 objects per frame) but NOT yet smoke-tested — do not claim video until a video call runs. Fallback remains local open-weights SAM ViT-B, already verified on Nagqu, labelled local, not hosted |
 
 ## Listed, not yet smoke-tested
 
 | Model | Intended use | Gate |
 |---|---|---|
-| `sam-3.1` | Human visual bridge: segment an AOI for a human reader | Do not guess endpoint or input shape. Confirm image vs video path in dev.meta.ai docs first, then one call with receipt. Fallback if hosted fails: local open-weights SAM ViT-B, already verified on Nagqu, labelled local, not hosted |
 | `muse-wonder-1.0` | Optional stronger reasoning for a final briefing, only if Spark hits a limit | Test one call, check cost first. Not the default. Do not use it blindly for every briefing |
 | `muse-voice-transcribe-1.0` | Optional demo narration / stream captions | Only if the demo needs it. Not core |
 
