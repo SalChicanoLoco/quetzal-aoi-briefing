@@ -1,0 +1,17 @@
+{
+  "visual_label": "GENERATED VISUAL",
+  "image_source": "generated",
+  "model": "muse-image-1.0",
+  "prompt": "Stylised concept illustration, not a map, not a satellite photo, not scientific data: a wide ocean horizon at dusk with a small network of observation buoys and a faint grid of watch zones over the sea, calm, editorial, high-contrast illustration style, no text, no numbers, no labels, no map outlines, no coastline detail. Inspiration only (not depicted as data): AOI AOI--20N--180E, Pacific ocean watch area.",
+  "file": "assets/generated-visual-fiji.webp",
+  "aoi_id": "AOI--20N--180E",
+  "receipt": {
+    "source": "meta-image-live",
+    "generated_at": "2026-10-26T22:33:33.278Z",
+    "status": 200,
+    "b64_len": 769056,
+    "file_bytes": 564000,
+    "dimensions": "1600x1600"
+  },
+  "note": "Illustration only. Not a map, not satellite imagery, not a SAM mask, not data."
+}
