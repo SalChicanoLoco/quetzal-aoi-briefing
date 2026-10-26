@@ -1,9 +1,18 @@
 # Team — Quetzal AOI Briefing
 
 Max team: 4 total, per the hackathon guide. Salvador + up to 3 teammates.
-Status Oct 26: seeking. A few teammates may be coming in — names are added
-here only when Salvador confirms them in Discord. No one is listed as joined
-until Salvador says so.
+Status Oct 26: 1 teammate joined, 2 seats open. Handles only, no personal
+details, in this public file.
+
+## Joined team
+
+| Handle | Role |
+|---|---|
+| SalChicanoLoco | Lead / geophysics — final approver, overrules all |
+| rofaida80_39670 | SAM / visual — mask to visual overlay for the demo |
+
+A handle is added here only when Salvador confirms that person has
+joined, with a role. Prospects are never listed here.
 
 ## Roles
 
@@ -34,11 +43,9 @@ by Oct 27, or that role is cut from scope.
   and Morath keeps this repo, the plan, and the receipts current.
 - Decisions are Salvador's, or the role owner's, in their role. No silent scope changes.
 
-## Prospective teammates
+## Open seats
 
-Status Oct 26: seeking, up to 3 seats, max team 4. No commitments have been
-made to anyone yet.
-
-Prospective teammate names, skills, and fit notes are kept in Salvador's
-local shortlist only, not in this public repository. A name is added here
-only when that person has actually joined the team, with their role.
+Status Oct 26: 2 seats open, max team 4. Prospects are kept in
+Salvador's local shortlist only, not in this public repository.
+A handle is added to the joined table above only when that person
+has actually joined, with a role.
