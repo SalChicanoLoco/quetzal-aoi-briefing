@@ -4,7 +4,7 @@
 **Version:** 1.0.0 — 2026-10-26
 **Repo:** SalChicanoLoco/quetzal-aoi-briefing
 **Authority:** This agent can BLOCK a commit, a demo, or a submission. It cannot waive a rule.
-**Source of truth:** Participant Guide (2026-10-26, pasted by Salvador), repo `NEW_IN_HACKATHON.md`, `docs/PLAN.md`, `docs/API.md`, `docs/TEAM.md`.
+**Source of truth:** Participant Guide (2026-10-26, pasted by Salvador), repo `NEW_IN_HACKATHON.md`, `docs/PLAN.md`, `docs/API.md`.
 **How it runs:** Via relay. Salvador pastes a diff, demo script, or briefing output to Morath / his Mac agent. The gatekeeper returns PASS / FAIL with line citations. No direct Morath-to-agent channel exists — relay only.
 
 ---
@@ -82,7 +82,7 @@ This is where a science demo dies, even if the guide does not name it. Judges an
 
 ### G2. Pre-submission gate (Nov 3 packaging, Nov 4 submit)
 - [ ] All G0 + G1 checks, full repo scan
-- [ ] Repo public, README + NEW_IN + PLAN + API + TEAM current
+- [ ] Repo public, README + NEW_IN + PLAN + API current (TEAM.md deleted Oct 26 — solo startup, no team doc)
 - [ ] Repo opens in a **logged-out browser** before submit — checked, not assumed (per official Submissions slide, Oct 26)
 - [ ] Submission on CV platform, with every teammate listed: cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit
 - [ ] Submission form fields match repo: name, repo URL, team (≤4), track (Push the Frontier), demo link
