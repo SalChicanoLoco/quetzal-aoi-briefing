@@ -1,0 +1,96 @@
+{
+  "step": 7,
+  "generated_at": "2026-10-26T23:41:41.574Z",
+  "fetch_mode": "live",
+  "live_leg": {
+    "aoi": {
+      "id": "AOI--20N--180E",
+      "polygon": [
+        [
+          -180,
+          -20
+        ],
+        [
+          -178,
+          -20
+        ],
+        [
+          -178,
+          -18
+        ],
+        [
+          -180,
+          -18
+        ],
+        [
+          -180,
+          -20
+        ]
+      ],
+      "polygon_label": "computed",
+      "centroid": {
+        "latitude": -18.283,
+        "longitude": -178.0109,
+        "label": "computed"
+      },
+      "events_used": 1,
+      "events_used_label": "measured",
+      "total_energy_joules": 11220184543019.652,
+      "total_energy_label": "computed",
+      "max_magnitude": 5.5,
+      "max_magnitude_label": "measured",
+      "interpretation": "Cell with the highest total radiated energy in this window; worth investigating, not a prediction of a future event.",
+      "interpretation_label": "inferred",
+      "cells_ranked": 68
+    },
+    "receipt": {
+      "source": "quetzal-live",
+      "request_id": "qz-req-296740b69ea2",
+      "generated_at": "2026-10-26T23:41:41Z",
+      "fetch_ms": 1066,
+      "events": 197,
+      "url": "https://quetzal-geophysics-972385362861.us-central1.run.app/api/seismic/live?feed=day&limit=200"
+    },
+    "label_failures": [],
+    "spark_prompt": "You are writing a Quetzal AOI Briefing. Use ONLY the numbers below. Do not invent any number, probability, depth, or location.\nWrite exactly 2 sentences, forecast language only. Include the AOI id verbatim.\nThis is NOT a prediction: say the area is worth more observation, never that an event will occur at a specific time.\n\nAOI id: AOI--20N--180E\nPolygon (lon, lat, closed ring): [[-180,-20],[-178,-20],[-178,-18],[-180,-18],[-180,-20]]\nCentroid: -18.283, -178.0109 [computed]\nEvents used in this cell: 1 [measured]\nMax magnitude in this cell: 5.5 [measured]\nTotal radiated energy in this cell: 11220184543019.652 joules [computed, Gutenberg-Choy]\nReceipt source: quetzal-live\nReceipt time: 2026-10-26T23:41:41Z\nVisual mask: none in this run — do not claim a mask."
+  },
+  "mask_leg": {
+    "aoi_id": "AOI-32N-94E",
+    "note": "Discrete snow feature inside Nagqu AOI, NOT a mask for the live Fiji AOI. Do not present it as one.",
+    "sam_failures": [],
+    "mask_record": {
+      "aoi_id": "AOI-32N-94E",
+      "bounding_box": {
+        "lon_min": 94,
+        "lon_max": 96,
+        "lat_min": 32,
+        "lat_max": 34,
+        "lon_span_deg": 2,
+        "lat_span_deg": 2,
+        "label": "computed"
+      },
+      "mask_label": "COMPUTED MASK",
+      "model": "sam-3.1",
+      "source": "hosted",
+      "prompt": "snow",
+      "image_source": "Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12, 1165x1394, Esri, Maxar, Earthstar Geographics (script field originally mislabelled OSM — corrected here)",
+      "boxes": 1,
+      "masks": 1,
+      "mask_pixels": 2197,
+      "box": [
+        776,
+        377,
+        831,
+        444
+      ],
+      "receipt": {
+        "source": "hosted",
+        "model": "sam-3.1",
+        "fetched_at": "2026-10-26T00:00:00Z",
+        "image_source": "Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12, 1165x1394, Esri, Maxar, Earthstar Geographics (script field originally mislabelled OSM — corrected here)",
+        "note": "Mask is a segmentation of the supplied image only. It is not a satellite image, not measured data, and not a prediction."
+      }
+    }
+  },
+  "status": "PASS"
+}
