@@ -17,9 +17,14 @@ uploaded file by SHA-256.
 - Dimensions: 1600x1600, size: 564K (local file, Oct 26).
 - SHA-256: `b3281c30a576d1abad4ea1db39559f9192d4e3452691ff850ef5e24091a34a52`
 - Record: `assets/generated-visual-fiji.json` (in this repo).
-- Upload status: BINARY NOT YET IN REPO — owner to upload via
-  GitHub web UI into `assets/`, then verify the SHA-256 below
-  matches the uploaded file.
+- Upload status: UPLOADED Oct 26, 2026 via Mac git CLI, commit
+  `ad7be0a1ea70344fdf58dfa92f543a3d9fbe5951`, message
+  "Assets: Step 6 generated visual binary", verified reading
+  back from main as a WebP binary. Note: that commit's author
+  is recorded as login `marjosavi481`, name "Tu Nombre",
+  email `tu@email.com` — a placeholder-looking git identity,
+  not `SalChicanoLoco`. Owner to check/fix Mac git identity
+  before the submission, so team attribution is clean.
 
 ## Demo video — Step 8, not yet made
 
