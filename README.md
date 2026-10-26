@@ -66,10 +66,15 @@ I want the judges and other developers to be able to see exactly what was built,
 
 ## Running the prototype
 
-The repository includes an orchestration skeleton that can run with mock telemetry, without requiring API credentials.
+The repository includes an orchestrator that can run with mock telemetry, without requiring API credentials, and with live telemetry when you choose it.
 
 ```bash
-node src/orchestrator.mjs
+node src/orchestrator.mjs          # mock mode, labelled mock
+node src/orchestrator.mjs --live   # live Quetzal feed, falls back to labelled mock on failure
+node test/orchestrator-v1.mjs      # AOI generation tests
+node test/label-receipt.mjs        # label and receipt gate tests
+node test/sam-bridge.mjs           # SAM bridge tests
+node test/spark-briefing.mjs       # Spark briefing tests
 ```
 
 Mock data is explicitly labelled as mock.
@@ -80,11 +85,15 @@ No API keys, tokens, or other secrets belong in GitHub commits.
 
 ## Current status — October 26, 2026
 
-This is an active build, not a finished production system.
+This is an active build, not a finished production system — but it is past skeleton stage. Steps 2 through 5 of the production plan are built, tested, and in this repository:
 
-The initial repository and orchestration skeleton are in place. Live smoke tests for Muse Spark 1.3, Muse Image 1.0, and SAM 3.1 (image path) have been run and documented, with receipts in `docs/API.md`.
+- **Orchestrator v1:** live Quetzal telemetry in, real 2°-grid AOI out. Live run: 200 events, 66 cells, top cell Fiji-area, M5.5, 1.12e13 joules [computed], receipt source quetzal-live.
+- **Label and receipt gate:** every briefing is checked for measured / computed / inferred labels and a receipt with source and time. The gate is proven to fail bad briefings, not just pass good ones. The live run above passes it with 0 failures.
+- **SAM visual bridge:** AOI polygon to bounding box, SAM result validator, mask record labelled COMPUTED MASK only. A vector map and an AOI-wide satellite view both returned 0 masks from hosted SAM — recorded honestly, not claimed. A higher-zoom satellite crop inside the Nagqu AOI (94.9–95.3°E, 33.1–33.5°N, Esri World Imagery, zoom 12) did produce a real hosted SAM mask: prompt "snow", 1 box, 1 mask, 2197 pixels, bridge validator 0 failures. That mask is for a discrete snow feature inside the AOI, not for the whole 2° cell.
+- **Spark briefing v1:** prompt builder using only receipted numbers, plus a briefing validator. Live Spark run on the Fiji AOI above: muse-spark-1.3, 2 sentences, forecast language only, validator 0 failures. Refinement comes later — a combined Nagqu AOI + snow mask briefing, tighter number checking, and prompt polish.
+- **Live smoke tests, documented in `docs/API.md`:** Muse Spark 1.3, Muse Image 1.0, and SAM 3.1 (image path) all PASS, with receipts.
 
-The hosted SAM video integration still needs its own verified smoke test. The full end-to-end demonstration remains in progress.
+Still to do: the hosted SAM video smoke test, the generated visual labelled GENERATED (step 6 in the plan), one continuous end-to-end run (feed → polygon → SAM mask → Spark briefing, no cuts hiding a step), and the 3-minute demo video showing only hackathon-built work.
 
 As each component is tested, we'll document the results and supporting receipts. I'm not interested in presenting a mock result as a live scientific observation.
 
