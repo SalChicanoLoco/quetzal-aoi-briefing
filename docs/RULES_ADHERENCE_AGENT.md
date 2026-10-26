@@ -83,6 +83,8 @@ This is where a science demo dies, even if the guide does not name it. Judges an
 ### G2. Pre-submission gate (Nov 3 packaging, Nov 4 submit)
 - [ ] All G0 + G1 checks, full repo scan
 - [ ] Repo public, README + NEW_IN + PLAN + API + TEAM current
+- [ ] Repo opens in a **logged-out browser** before submit — checked, not assumed (per official Submissions slide, Oct 26)
+- [ ] Submission on CV platform, with every teammate listed: cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit
 - [ ] Submission form fields match repo: name, repo URL, team (≤4), track (Push the Frontier), demo link
 - [ ] Credits: each teammate claimed their own $150 individually, Spend Limit set, no shared key
 - [ ] Final briefing run is live, labelled, receipted — not a mock, not a replay presented as live
