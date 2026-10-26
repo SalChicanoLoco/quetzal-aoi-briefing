@@ -34,12 +34,11 @@ by Oct 27, or that role is cut from scope.
   and Morath keeps this repo, the plan, and the receipts current.
 - Decisions are Salvador's, or the role owner's, in their role. No silent scope changes.
 
-## Shortlist (as of Oct 26, 11:28 MDT, from Discord Builders, relayed by Salvador)
+## Prospective teammates
 
-- Nikhil Adwaan — founder, AI-native HR — fit to confirm, ask what he would build.
-- Mohith — asked for the idea, skills unknown.
-- Apsari169 — asked for GitHub, skills unknown.
-- Zadda — AI and ML student, agents and ML — strong fit for role 2, pending experience, availability, timezone.
+Status Oct 26: seeking, up to 3 seats, max team 4. No commitments have been
+made to anyone yet.
 
-No commitments have been made to any of the above. Update this section when
-Salvador confirms a join, a decline, or a role.
+Prospective teammate names, skills, and fit notes are kept in Salvador's
+local shortlist only, not in this public repository. A name is added here
+only when that person has actually joined the team, with their role.
