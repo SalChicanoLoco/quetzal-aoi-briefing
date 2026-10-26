@@ -25,7 +25,7 @@ check("centroid is energy-weighted inside cell",
   aoi.centroid.longitude >= 94 && aoi.centroid.longitude <= 96);
 check("interpretation labelled inferred, explicitly not a prediction",
   aoi.interpretation_label === "inferred" && aoi.interpretation.includes("not a prediction"));
-check("2 cells ranked total", aoi.cells_ranked === 2, String(aoi.cells_ranked)); // 32N-94E + the lone 6.0 cell
+check("2 cells ranked total", aoi.cells_ranked === 2, String(aoi.cells_ranked)); // 32N-94E + the lone 3.0 cell
 
 // Parser shapes
 const geojson = { type: "FeatureCollection", features: [
