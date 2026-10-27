@@ -1,74 +1,140 @@
-# Quetzal AOI Briefing — great plan, Oct 26 to Nov 4, 2026
+# Quetzal AOI Briefing — plan, Oct 26 to Nov 4, 2026
 
 Track: Startup. Problem statement: Push the Frontier.
 Demo scope: Quetzal-tools-only orchestration. Forecast regimes are
 Salvador's background wiring, not a blocker, and not claimed as hackathon-built.
 
-## The demo in one paragraph
+State at HEAD `975fb91` (Oct 27): Steps 2–7 built and pushed,
+skill-agent + blind reproduction built and pushed, GIS/KML/viewer
+pushed, meta-checker pushed, labels prediction-gate tightening
+pushed, demo script approved and pushed, logged-out repo check
+done Oct 27. Fresh-clone CHECK PASS. What remains: orchestration
+spine (this refactor), shoot-day fresh live run, demo video,
+packaging, submission.
+
+## 1. Orchestration first — the single spine
+
+`src/spine.mjs` is the single entry point for the demo. One fixed
+order, one ledger, fail-closed gates, per-step timeout and retry
+budget. Design and verdicts in `docs/ORCHESTRATOR_DESIGN.md`
+(SANGRE KV1 is a belief store and kvrouter_v1 is a static route
+table — neither is a learning router, neither is imported). `src/e2e.mjs` remains the live-feed replay harness; the
+spine is what the demo shows. After Nov 4, fold one into the other.
+
+Agent capability, honestly, at HEAD:
+
+- Capable now ($0): tester skill (validators), debug skill
+  (fixed classification), checker, meta-checker, rules gate.
+- Capable in code, live only via the owner's call: briefing skill
+  (AOI + prompt, sends nothing), SAM skill (supplied results).
+- NOT capable live, CUT from any live claim: visual and demo
+  skills (prompt + mock only, fail closed), base-agent visual/demo
+  roles (prompt definitions only). The demo shows their prompts
+  and records, never a live run.
+- Tester role ran live via Spark once (Oct 26). Briefing, visual,
+  and demo roles never ran live as agents. Do not claim otherwise.
+
+## 2. The demo in one paragraph
 
 Live seismic telemetry in, automated area of interest out, SAM visual
 for a human reader, Spark briefing with labels and a receipt.
 Every number labelled measured / computed / inferred.
 Nothing in the demo is presented as a deterministic prediction.
 
-## Milestones
+## 3. Milestones — true state
 
-### Mon Oct 26 — Kickoff, scope freeze, Steps 2–7 built
-- Repo live, starter + smoke batch pushed. DONE.
-- Spark + Image smoke tests PASS. DONE.
-- SAM hosted image PASS, Nagqu discrete snow mask PASS (1 box, 1 mask, 2197 pixels). AOI-scale SAM gave 0 masks, recorded honestly. Video path documented, NOT smoke-tested.
-- Scope freeze: only verified tools stay in — Spark, Image, hosted SAM image. Everything else is parked.
-- Steps 2–7 pushed by end of day: orchestrator, label/receipt gate, SAM bridge, Spark briefing, generated visual (binary in repo), one continuous E2E run, agents + checker. Full check PASS, debug-agent PASS 33/0.
-- Solo startup, Oct 26: TEAM.md deleted, no team formation, no prospect tracking. Founder = Salvador Sena, + Morath/agents. Founder recruits on his side if help is needed.
+### Done: Mon Oct 26 — Kickoff, scope freeze, Steps 2–7
 
-### Tue Oct 27 — Demo prep, not a rebuild
-- Step 5 refinements if time: Nagqu + snow mask combined Spark briefing, bare-number validator, prompt polish.
-- Agents 101 session, 12:00 PM ET (10:00 AM MDT).
-- Rofaida's earlier visual assignment is superseded by the solo decision — no team work is blocked on, or assigned by, Morath.
+Repo live, Spark + Image + SAM image smoke tests PASS, Nagqu
+discrete snow mask PASS (2197 px), AOI-scale SAM 0 masks recorded
+honestly, scope freeze (Spark, Image, hosted SAM image only),
+Steps 2–7 pushed, full check PASS. Solo startup: TEAM.md deleted.
 
-### Wed Oct 28 — Verifiable agents, already built
-- Receipt and label tests: measured vs computed vs inferred, no mixing — built Oct 26, in repo.
-- Mock vs live results labelled, every time.
-- Session: Agents 102, 12:00 PM ET.
+### Done: Tue Oct 27 — Agents, GIS, gates, script, spine
+
+Skill-agent + blind reproduction pushed; fresh-clone fix + KML +
+Leaflet viewer pushed; meta-checker + debug-agent exit-code fix
+pushed; labels prediction-gate tightening pushed; demo script
+approved and pushed (shoot-day wording, opening line crediting
+pre-existing Quetzal); logged-out repo check PASS; orchestration
+spine + design doc + credit plan (this refactor).
+
+### Wed Oct 28 — Agents 102, no rebuild
+
+Session: Agents 102, 12:00 PM ET. No new features. Verify the
+spine in a fresh clone; fix only what the spine test proves broken.
 
 ### Thu Oct 29 — Visual bridge, already built
-- SAM mask + Image visual integrated into the briefing, with sources labelled — built Oct 26.
-- Generated image, labelled GENERATED. Never present a generated image as satellite data. Never repaint a SAM mask.
+
+SAM mask + Image visual integrated, sources labelled. No new
+visual work unless the shoot-day run proves a leg broken.
 
 ### Fri Oct 30 — Partner check, only if time
-- Session: Fireworks, 12:00 PM ET.
-- Evaluate Baseten / Modal / Fireworks open-weights only as stretch. Core must still work without them.
 
-### Sat Oct 31 — Demo video v1
-- 3-minute video, hackathon-built features only, live product holding up.
-- Script, screen capture, narration if Voice Transcribe is used, otherwise human narration.
+Session: Fireworks, 12:00 PM ET. Baseten / Modal / Fireworks
+only as stretch. Core must still work without them.
 
-### Sun Nov 1 — First full end-to-end run
-- Telemetry to AOI to SAM to Spark to briefing, one full pass, receipts recorded.
-- Fix only what breaks the demo. No new features after this date.
+### Sat Oct 31 — Demo video v1 (target)
+
+3-minute video, hackathon-built features only. Numbers only from
+the shoot-day receipt. Salvador's human voiceover.
+
+### Sun Nov 1 — No new features after this date
+
+Fix only what breaks the demo. No new features after Nov 1.
+This date is the feature freeze, not the first full run — the
+full run happens on the shoot day, with receipts.
 
 ### Mon Nov 2 — Hardening + Codex, separate track
-- Hardening all day, no new features.
-- Codex x TwitchCon submission deadline 3:00 PM MST, separate from Meta. Do not let it eat Meta hardening time; time-box it.
+
+Hardening, no new features. Codex x TwitchCon submission
+deadline 3:00 PM MST, separate track, time-boxed; it must not
+eat Meta hardening time. Aspen appointment 1:30 PM MST.
 
 ### Tue Nov 3 — Packaging
-- Last full day for submission questions and troubleshooting, per the guide.
-- Repo clean, README, NEW_IN_HACKATHON.md, demo video link, all public and accessible.
+
+Repo clean, README, NEW_IN_HACKATHON.md, demo video link, all
+public and accessible. Logged-out check repeated at packaging.
 
 ### Wed Nov 4 — Submit early
-- Final office hours in Discord.
-- Submit via the CV platform by 9:00 PM ET. Target: submit by noon ET, not at the deadline.
-- Judging Nov 5-8, closing Nov 9, community vote winner Nov 16.
 
-## Judging, in our favour
-- Impact 30%: real civil hazard use — where more observation is needed.
-- Meta tooling 25%: Spark + SAM + Image, used together, not a basic integration.
-- Demo 25%: working live demo, 3-minute video that holds up.
-- Technical depth 20%: labelled, receipted, verifiable orchestration.
+Submit via the CV platform by 9:00 PM ET. Target: noon ET, not
+at the deadline. Judging Nov 5–8, closing Nov 9, community
+vote winner Nov 16.
 
-## What we will not do
+## 4. Judging — weights conflict, unresolved
+
+Participant guide (pasted by Salvador): Impact 30%, Meta tooling
+25%, Demo 25%, Technical depth 20%. A Discord snapshot summary
+described scoring as equal across the four criteria. The conflict
+is UNRESOLVED — do not replace the guide weights without
+organizer clarification, and do not present equal weighting as
+the rule. The demo script is built to hit all four either way:
+impact (civil hazard use), Meta tooling (Spark + SAM + Image
+with receipts), demo (working live run), technical depth
+(labelled, receipted, verifiable orchestration).
+
+## 5. Credit budget — two buckets, do not confuse them
+
+Meta Model API credits: ~$149.85 remaining ($0.00 spend Oct 21–27).
+The 67% figure is Muse subscription usage, NOT Meta credits —
+that bucket is the binding constraint. No refill assumed for
+either. Full plan: `docs/CREDIT_PLAN.md`.
+Lean shoot-day run: $0.042 nominal, $0.084 with the 2x buffer
+(rates unverified, secondary sources only). Hard stop: $10 Meta
+floor, two-failure rule, count tokens/frames before every call.
+Muse efficiency: fewer, larger batches, local $0 work first, no
+redundant re-reads or re-runs, no live call until fully verified
+locally.
+
+## 6. What we will not do
+
 - No deterministic prediction claims, ever.
 - No contributor models for proprietary work.
 - No keys, tokens, or secrets in the repo, in Discord, or in chat.
 - No new features after Nov 1.
 - No claiming mock, generated, or pre-existing work as live, measured, or hackathon-built.
+- No SAM video, Wonder, or Voice Transcribe claim — untested, cut.
+- No learning-router claim — no scored ledger data yet; the
+  spine stays static and the ledger is what a future router
+  would learn from.
