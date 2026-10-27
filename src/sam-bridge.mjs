@@ -29,13 +29,17 @@ export function aoiBoundingBox(polygon) {
   }
   const lons = polygon.map((p) => p[0]);
   const lats = polygon.map((p) => p[1]);
+  const lon_min = Math.min(...lons);
+  const lon_max = Math.max(...lons);
+  const lat_min = Math.min(...lats);
+  const lat_max = Math.max(...lats);
   return {
-    lon_min: Math.min(...lons),
-    lon_max: Math.max(...lons),
-    lat_min: Math.min(...lats),
-    lat_max: Math.max(...lats),
-    lon_span_deg: Math.max(...lons) - Math.min(...lons),
-    lat_span_deg: Math.max(...lats) - Math.min(...lats),
+    lon_min,
+    lon_max,
+    lat_min,
+    lat_max,
+    lon_span_deg: lon_max - lon_min,
+    lat_span_deg: lat_max - lat_min,
     label: "computed",
   };
 }

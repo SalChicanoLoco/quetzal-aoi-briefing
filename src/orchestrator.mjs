@@ -113,6 +113,7 @@ export function makeAOI(telemetry) {
   const ranked = [...cells.values()].sort(
     (a, b) => b.total_energy_joules - a.total_energy_joules,
   );
+  if (ranked.length === 0) throw new Error("makeAOI: no cells — empty telemetry");
   const top = ranked[0];
   const centroid = {
     latitude: top.weighted_lat / top.total_energy_joules,
@@ -142,10 +143,8 @@ export function makeAOI(telemetry) {
   };
 }
 
-export function mockTelemetry() {
-  return [
-    { id: "mock-1", magnitude: 4.8, latitude: 32.1, longitude: 94.2, depth: 10, time: "2026-10-26T00:00:00Z", place: "mock" },
-  ].map((e) => ({
+function withLabels(list) {
+  return list.map((e) => ({
     ...e,
     magnitude_label: "measured",
     energy_joules: energyJoules(e.magnitude),
@@ -153,21 +152,26 @@ export function mockTelemetry() {
   }));
 }
 
+export function mockTelemetry() {
+  return withLabels([
+    { id: "mock-1", magnitude: 4.8, latitude: 32.1, longitude: 94.2, depth: 10, time: "2026-10-26T00:00:00Z", place: "mock" },
+  ]);
+}
+
 export function fixtureTelemetry() {
   // Fixed fixture: 3 events in one 2° cell, 1 small event elsewhere.
   // Expected: top cell 32N-94E, 3 events, max 5.2, energy = sum of
   // Gutenberg-Choy energies for 5.2, 4.8, 4.1.
-  return [
+  // f4 (-10, -170) is the negative-cell case: cellKey "-10N--170E"
+  // parses back to [-10, -170] because replace("N-", ",") consumes
+  // only the first minus after N. A Spark review claimed otherwise;
+  // verified wrong, see test/orchestrator-v1.mjs.
+  return withLabels([
     { id: "f1", magnitude: 5.2, latitude: 32.1, longitude: 94.2 },
     { id: "f2", magnitude: 4.8, latitude: 33.0, longitude: 95.0 },
     { id: "f3", magnitude: 4.1, latitude: 32.5, longitude: 94.8 },
     { id: "f4", magnitude: 3.0, latitude: -10.0, longitude: -170.0 },
-  ].map((e) => ({
-    ...e,
-    magnitude_label: "measured",
-    energy_joules: energyJoules(e.magnitude),
-    energy_label: "computed",
-  }));
+  ]);
 }
 
 export function brief(aoi, receipt) {
@@ -227,13 +231,11 @@ async function main() {
   } else {
     telemetry = mockTelemetry();
     receipt = { source: "mock", generated_at: new Date().toISOString(), note: "mock mode — replace with --live for real telemetry" };
-    // Preserve the original smoke-test shape in mock mode.
-    const aoi = makeAOI(telemetry);
-    console.log(JSON.stringify(brief({ ...aoi, id: "AOI-MOCK" }, receipt), null, 2));
-    return;
   }
   const aoi = makeAOI(telemetry);
-  console.log(JSON.stringify(brief(aoi, receipt), null, 2));
+  // Preserve the original smoke-test shape in mock mode.
+  const out = receipt.source === "mock" && receipt.note.includes("mock mode") ? { ...aoi, id: "AOI-MOCK" } : aoi;
+  console.log(JSON.stringify(brief(out, receipt), null, 2));
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

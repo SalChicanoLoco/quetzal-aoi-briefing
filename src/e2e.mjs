@@ -27,11 +27,16 @@ import { validateSamResult, buildMaskRecord } from "./sam-bridge.mjs";
 import { buildSparkPrompt } from "./spark-briefing.mjs";
 
 const args = process.argv.slice(2);
-const out = args.includes("--out") ? args[args.indexOf("--out") + 1] : null;
-const feedPath = args.includes("--feed") ? args[args.indexOf("--feed") + 1] : null;
-const samPath = args.includes("--sam")
-  ? args[args.indexOf("--sam") + 1]
-  : join(dirname(dirname(fileURLToPath(import.meta.url))), "..", "sam-z12-snow-corrected.json");
+function argVal(flag) {
+  const i = args.indexOf(flag);
+  if (i === -1) return null;
+  if (i + 1 >= args.length) throw new Error(`e2e: ${flag} needs a value`);
+  return args[i + 1];
+}
+const out = argVal("--out");
+const feedPath = argVal("--feed");
+const samPath = argVal("--sam")
+  ?? join(dirname(dirname(fileURLToPath(import.meta.url))), "..", "sam-z12-snow-corrected.json");
 
 let feed, fetchMs = 0, fetchMode = "live";
 const t0 = Date.now();

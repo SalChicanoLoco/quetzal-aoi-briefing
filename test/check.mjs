@@ -2,12 +2,12 @@
 // Zero dependencies, Node 24 only. Fast by design: unit tests only,
 // no live calls. Live runs are checked separately with --live.
 // Usage: node test/check.mjs
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 
-function run(cmd, label) {
+function run(args, label) {
   try {
-    execSync(cmd, { encoding: "utf8", stdio: "pipe" });
+    execFileSync("node", args, { encoding: "utf8", stdio: "pipe" });
     console.log(`PASS ${label}`);
     return true;
   } catch (e) {
@@ -19,14 +19,14 @@ function run(cmd, label) {
 
 let ok = true;
 for (const f of readdirSync("src").filter((x) => x.endsWith(".mjs"))) {
-  ok = run(`node --check src/${f}`, `syntax src/${f}`) && ok;
+  ok = run(["--check", `src/${f}`], `syntax src/${f}`) && ok;
 }
 for (const f of readdirSync("test").filter((x) => x.endsWith(".mjs") && x !== "check.mjs" && x !== "debug-agent.mjs")) {
   // debug-agent.mjs is a runner, not a unit test: running it inside
   // check.mjs would recurse (it runs check.mjs itself).
-  ok = run(`node test/${f}`, `test ${f}`) && ok;
+  ok = run([`test/${f}`], `test ${f}`) && ok;
 }
-ok = run("node test/rules-check.mjs", "rules-check") && ok;
+ok = run(["test/rules-check.mjs"], "rules-check") && ok;
 
 // Strict, dependency-free lint: no var, no ==/!= (loose), no TODO,
 // no secret patterns in src/test. CLI console.log in orchestrator
@@ -40,7 +40,7 @@ for (const dir of ["src", "test"]) {
     const text = readFileSync(`${dir}/${f}`, "utf8");
     const bad = [];
     if (/\bvar\s/.test(text)) bad.push("var");
-    if (/[^=!]==[^=]/.test(text)) bad.push("loose ==");
+    if (/(?<![=!])==(?!=)/.test(text)) bad.push("loose ==");
     if (/TODO|FIXME/.test(text)) bad.push("TODO/FIXME");
     if (secretRe.test(text)) bad.push("possible secret pattern");
     if (dir === "src" && !["orchestrator.mjs", "e2e.mjs"].includes(f) && /console\.log/.test(text)) bad.push("console.log in library");

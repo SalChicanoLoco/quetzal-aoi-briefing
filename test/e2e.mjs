@@ -8,7 +8,7 @@ import { fixtureTelemetry } from "../src/orchestrator.mjs";
 
 const feed = { requestId: "test-feed-1", generatedAt: "2026-10-26T00:00:00Z", events: fixtureTelemetry() };
 writeFileSync("/tmp/e2e-test-feed.json", JSON.stringify(feed));
-const out = execSync("node src/e2e.mjs --feed /tmp/e2e-test-feed.json --sam test/sam-fixture.json --out /tmp/e2e-test-receipt.json", { encoding: "utf8" });
+execSync("node src/e2e.mjs --feed /tmp/e2e-test-feed.json --sam test/sam-fixture.json --out /tmp/e2e-test-receipt.json", { encoding: "utf8" });
 const receipt = JSON.parse(readFileSync("/tmp/e2e-test-receipt.json", "utf8"));
 assert.equal(receipt.status, "PASS");
 assert.equal(receipt.fetch_mode, "replay");

@@ -16,9 +16,18 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const args = process.argv.slice(2);
-const dir = args.includes("--dir") ? args[args.indexOf("--dir") + 1] : process.cwd();
-const reportPath = args.includes("--report") ? args[args.indexOf("--report") + 1] : null;
-const single = args.includes("--single") ? args[args.indexOf("--single") + 1] : null;
+function argVal(flag) {
+  const i = args.indexOf(flag);
+  if (i === -1) return null;
+  if (i + 1 >= args.length) {
+    console.error(`debug-agent: ${flag} needs a value`);
+    process.exit(2);
+  }
+  return args[i + 1];
+}
+const dir = argVal("--dir") ?? process.cwd();
+const reportPath = argVal("--report");
+const single = argVal("--single");
 
 function classify(line) {
   if (/syntax/.test(line)) return { category: "syntax", severity: "block", fix: "Fix the syntax error in the named file; re-run node --check on it." };

@@ -26,6 +26,13 @@ check("centroid is energy-weighted inside cell",
 check("interpretation labelled inferred, explicitly not a prediction",
   aoi.interpretation_label === "inferred" && aoi.interpretation.includes("not a prediction"));
 check("2 cells ranked total", aoi.cells_ranked === 2, String(aoi.cells_ranked)); // 32N-94E + the lone 3.0 cell
+// Negative-cell case, Spark review 2026-10-26 claimed this was broken:
+// a lone event at (-10, -170) must land in cell [-10, -170] to [-8, -168].
+const neg = makeAOI([{ magnitude: 3.0, latitude: -10.0, longitude: -170.0, energy_joules: energyJoules(3.0) }]);
+check("negative cell parses correctly, not 0", neg.polygon[0][0] === -170 && neg.polygon[0][1] === -10, JSON.stringify(neg.polygon[0]));
+let emptyThrew = false;
+try { makeAOI([]); } catch { emptyThrew = true; }
+check("empty telemetry throws explicitly, not TypeError on undefined", emptyThrew);
 
 // Parser shapes
 const geojson = { type: "FeatureCollection", features: [

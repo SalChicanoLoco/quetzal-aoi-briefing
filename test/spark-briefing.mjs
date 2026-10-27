@@ -19,8 +19,10 @@ check("prompt forbids new numbers", /Do not invent any number/i.test(prompt));
 check("prompt says not a prediction", /NOT a prediction/i.test(prompt));
 
 const good = `Quetzal AOI Briefing — ${aoi.id}: this cell, with max magnitude M5.2 [measured], is worth more observation, not a prediction of a specific event. Its total radiated energy is computed from the events in this cell, as recorded in the receipt.`;
-check("good briefing passes", validateSparkBriefing(good, aoi).length === 0,
-  validateSparkBriefing(good, aoi).join("; "));
+{
+  const failures = validateSparkBriefing(good, aoi);
+  check("good briefing passes", failures.length === 0, failures.join("; "));
+}
 
 const badPred = good.replace("not a prediction", "an earthquake will occur tomorrow");
 check("validator fails prediction", validateSparkBriefing(badPred, aoi).length > 0);
@@ -33,8 +35,10 @@ check("validator fails missing AOI id", validateSparkBriefing(noId, aoi).length 
 const badBare = `${good} The chance is 42 percent.`;
 check("validator fails invented bare number", validateSparkBriefing(badBare, aoi).length > 0);
 const goodEnergy = `${good} Total radiated energy is ${aoi.total_energy_joules} joules computed.`;
-check("validator passes context energy number", validateSparkBriefing(goodEnergy, aoi).length === 0,
-  validateSparkBriefing(goodEnergy, aoi).join("; "));
+{
+  const failures = validateSparkBriefing(goodEnergy, aoi);
+  check("validator passes context energy number", failures.length === 0, failures.join("; "));
+}
 
 // v2 — combined AOI + mask briefing, Nagqu snow mask fixture.
 // Fixture AOI here is the orchestrator fixture (AOI-32N-94E);
