@@ -40,12 +40,40 @@ export function validateBriefing(briefing) {
   if (typeof aoi.max_magnitude !== "number") fail("max_magnitude is not a number");
   if (!Array.isArray(aoi.polygon) || aoi.polygon.length !== 5) fail("polygon is not a closed 5-point ring");
 
-  // Prediction claims: affirmative only. "not a prediction" passes.
+  // Prediction claims: affirmative only. A denial ("not a prediction",
+  // "not a predictive model") is scrubbed before scanning, so a denial
+  // cannot whitewash an affirmative claim elsewhere in the briefing:
+  // the whole briefing object is scanned, not just the interpretation.
+  // Allowed forecast language — "forecast hotspot", "exceedance
+  // probability", "worth investigating" — contains none of the claim
+  // patterns below and still passes.
   const text = JSON.stringify(briefing);
-  if (/will (occur|happen|strike)/i.test(text)) fail("prediction claim: will occur/happen/strike");
-  if (/predicted to/i.test(text)) fail("prediction claim: predicted to");
-  if (/earthquake prediction/i.test(text) && !/not a prediction/i.test(text)) {
-    fail("prediction claim: earthquake prediction");
+  const denialRe =
+    /\bnot a (deterministic )?prediction\b|\bnot a predictive model\b|\bno prediction\b|\bnever a prediction\b|\bnot imminent\b/gi;
+  const scrubbed = text.replace(denialRe, "");
+  const claimPatterns = [
+    [/will (occur|happen|strike|hit|shake)/i, "prediction claim: will occur/happen/strike/hit/shake"],
+    [/going to (occur|happen|strike|hit|shake)/i, "prediction claim: going to occur/happen/strike/hit/shake"],
+    [/about to (occur|happen|strike|hit)/i, "prediction claim: about to occur/happen/strike/hit"],
+    [/expected to (occur|happen|strike|hit)/i, "prediction claim: expected to occur/happen/strike/hit"],
+    [/certain to (occur|happen|strike|hit)/i, "prediction claim: certain to occur/happen/strike/hit"],
+    [/forecast(?:ed)? to (occur|happen|strike|hit)/i, "prediction claim: forecast to occur/happen/strike/hit"],
+    [/predictive model/i, "prediction claim: predictive model"],
+    [/earthquake prediction/i, "prediction claim: earthquake prediction"],
+    [/predicts\b/i, "prediction claim: predicts"],
+    [/predicting\b/i, "prediction claim: predicting"],
+    [/predicted to/i, "prediction claim: predicted to"],
+    [/predicted (an? )?(earthquake|quake|event)/i, "prediction claim: predicted earthquake/event"],
+    [/\bprediction\b/i, "prediction claim: prediction"],
+    [/\b(imminent|inevitable)\b/i, "prediction claim: imminent/inevitable"],
+    [/(earthquake|quake|seismic event|event)\b[^.!?]{0,60}\bwill\b/i, "prediction claim: event + will"],
+    [/\bwill\b[^.!?]{0,40}\b(earthquake|quake)\b/i, "prediction claim: will + earthquake/quake"],
+  ];
+  for (const [pattern, message] of claimPatterns) {
+    if (pattern.test(scrubbed)) fail(message);
+  }
+  if (typeof aoi.interpretation !== "string" || aoi.interpretation.length === 0) {
+    fail("interpretation missing");
   }
   if (aoi.interpretation && !/not a prediction/i.test(aoi.interpretation)) {
     fail("interpretation does not explicitly disclaim prediction");

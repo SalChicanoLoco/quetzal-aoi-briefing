@@ -2,10 +2,17 @@
 
 Target: 2:50, hard cap 3:00. Voiceover is Salvador's human voice; no AI
 voiceover is used or claimed. Every number on screen must be traced to
-a demo-day receipt before shooting — Oct 26 receipts below are the
-template, not the demo-day numbers. No segment may be shot before this
+a shoot-day receipt before shooting — Oct 26 receipts below are the
+template, not the shoot-day numbers. No segment may be shot before this
 script is approved (G1). Pre-existing work is credited on screen in
 every segment that touches it (C5).
+
+## Opening line — first seconds of Segment 1 (0:00, spoken + on screen, within the 2:50 runtime)
+
+> "The Quetzal geophysics system underneath this predates the hackathon; everything in this demo — the AOI briefing, SAM bridge, Spark briefing, generated visual, GIS/KML/viewer, skill-agent, and checks — was built during the event, Oct 26–Nov 4, 2026."
+
+Delivered at the very start, before any other narration. It does not
+add time: it is the first line of Segment 1 (0:00–0:20).
 
 ## What the judges should see, and where
 
@@ -59,7 +66,7 @@ This script hits all four on purpose, in this order:
 
 ### 3. Live telemetry to AOI — 0:50–1:20 (API + Multimodal: numeric)
 
-- Visual: ONE continuous terminal run, demo-day fresh live run of
+- Visual: ONE continuous terminal run, shoot-day fresh live run of
   `src/e2e.mjs` (60s timeout). Show the live request, event count,
   cell count, top AOI id, measured magnitude, computed energy.
   Label on screen: LIVE TELEMETRY (measured values only) /
@@ -67,12 +74,12 @@ This script hits all four on purpose, in this order:
 - Narration (draft): "Live seismic telemetry in. The highest-energy
   2-degree cell becomes the area of interest. Magnitude is measured.
   Energy is computed, and labelled computed."
-- Demo-day numbers go here from the fresh run receipt only. Template
-  from Oct 26 (do NOT read these as demo-day numbers): request
+- Shoot-day numbers go here from the fresh run receipt only. Template
+  from Oct 26 (do NOT read these as shoot-day numbers): request
   qz-req-296740b69ea2, 197 events, 68 cells, Fiji AOI--20N--180E,
   M5.5 measured, 1.122e13 J computed.
 - Maps to: Steps 2–3, Step 7, `assets/e2e-live-receipt.json`
-  (demo-day receipt to be added).
+  (shoot-day receipt to be added).
 
 ### 4. Spark briefing — 1:20–1:45 (API + Multimodal: text)
 
@@ -82,7 +89,7 @@ This script hits all four on purpose, in this order:
 - Narration (draft): "Spark writes the briefing from the AOI and
   nothing else. Two sentences, the same numbers, no new claims."
 - Label on screen: COMPUTED BRIEFING — muse-spark-1.3, receipt id
-  from the demo-day run.
+  from the shoot-day run.
 - Maps to: Step 5, Spark review pass.
 
 ### 5. SAM mask to map — 1:45–2:25 (API + Multimodal: image + map)
@@ -95,8 +102,8 @@ This script hits all four on purpose, in this order:
 - Narration (draft): "SAM segments the feature in the image. The mask
   becomes a real polygon — GeoJSON, KML, and a browser map — so nobody
   has to hunt for it in a GIS. The mask is computed, never measured."
-- Demo-day numbers go here from the fresh SAM receipt only. Template
-  from Oct 27 blind re-run (do NOT read as demo-day numbers): box
+- Shoot-day numbers go here from the fresh SAM receipt only. Template
+  from Oct 27 blind re-run (do NOT read as shoot-day numbers): box
   [776,377,831,444], mask 55x67, 2198 pixels vs 2197 expected.
   Nagqu leg labelled Nagqu; Fiji leg labelled Fiji; never present
   Nagqu as Fiji.
@@ -138,7 +145,7 @@ This script hits all four on purpose, in this order:
 ## Before shooting
 
 1. Salvador approves this script (and rewrites narration as he likes).
-2. Fresh demo-day live run: E2E + Spark + SAM, receipts saved to
+2. Fresh shoot-day live run: E2E + Spark + SAM, receipts saved to
    `assets/`, script numbers updated to those receipts only.
 3. Frame-by-frame secrets/credit check on the edit.
 4. Video hosted on CV/YouTube (not a GitHub binary); script, link,
