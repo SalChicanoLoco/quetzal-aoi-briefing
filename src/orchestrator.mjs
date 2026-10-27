@@ -181,7 +181,10 @@ export function brief(aoi, receipt) {
 
 async function fetchLive() {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10000);
+  // 60s, not 10s: live latency varied 1s–20s Oct 26, and the old
+  // 10s timeout silently fell back to mock on slow days. Step 7
+  // uses the same 60s timeout for the same reason.
+  const timer = setTimeout(() => controller.abort(), 60000);
   try {
     const res = await fetch(LIVE_URL, { signal: controller.signal });
     if (!res.ok) throw new Error(`live feed HTTP ${res.status}`);
