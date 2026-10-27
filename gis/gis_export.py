@@ -292,6 +292,68 @@ def validate_gis_geojson(fc, image):
     return failures
 
 
+def geojson_to_kml(fc):
+    """KML (OGC KML 2.2) for the SAME GeoJSON FeatureCollection.
+
+    Format conversion only — the GeoJSON is the single source of
+    truth, so coordinates and the COMPUTED MASK label are identical
+    to the GeoJSON. Mirrors ``geoJsonToKml`` in ``src/gis-export.mjs``:
+    KML coordinates are lon,lat,0, property values are XML-escaped.
+    """
+    from xml.sax.saxutils import escape
+
+    if not fc or fc.get("type") != "FeatureCollection" or not isinstance(
+        fc.get("features"), list
+    ):
+        raise ValueError("gis-export: KML needs a GeoJSON FeatureCollection")
+    placemarks = []
+    for feature in fc["features"]:
+        props = feature.get("properties") or {}
+        name = escape(str(props.get("kind", "feature")))
+        data_lines = []
+        for key, value in props.items():
+            data_lines.append(
+                f'        <Data name="{escape(str(key))}">'
+                f"<value>{escape(str(value if value is not None else ''))}</value></Data>"
+            )
+        geom = feature.get("geometry") or {}
+        if geom.get("type") == "Polygon":
+            coords = " ".join(
+                f"{lon},{lat},0" for lon, lat in geom["coordinates"][0]
+            )
+            shape = (
+                "      <Polygon><outerBoundaryIs><LinearRing>"
+                f"<coordinates>{coords}</coordinates>"
+                "</LinearRing></outerBoundaryIs></Polygon>"
+            )
+        elif geom.get("type") == "Point":
+            lon, lat = geom["coordinates"]
+            shape = f"      <Point><coordinates>{lon},{lat},0</coordinates></Point>"
+        else:
+            raise ValueError(
+                f"gis-export: KML does not support geometry type {geom.get('type')}"
+            )
+        placemarks.append(
+            "    <Placemark>\n"
+            f"      <name>{name}</name>\n"
+            "      <ExtendedData>\n"
+            + "\n".join(data_lines)
+            + "\n      </ExtendedData>\n"
+            + shape
+            + "\n    </Placemark>"
+        )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<kml xmlns="http://www.opengis.net/kml/2.2">\n'
+        "  <Document>\n"
+        "    <name>COMPUTED MASK — Quetzal AOI Briefing</name>\n"
+        "    <description>Computed mask over supplied imagery. "
+        "Not measured data, not ground truth, not a prediction.</description>\n"
+        + "\n".join(placemarks)
+        + "\n  </Document>\n</kml>\n"
+    )
+
+
 def image_from_sidecar(sidecar, width=None, height=None):
     """Build an image georeference dict from a pull_satellite.py sidecar.
 

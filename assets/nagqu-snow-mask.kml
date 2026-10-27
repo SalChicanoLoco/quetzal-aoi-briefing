@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>COMPUTED MASK — Quetzal AOI Briefing</name>
+    <description>Computed mask over supplied imagery. Not measured data, not ground truth, not a prediction.</description>
+    <Placemark>
+      <name>AOI</name>
+      <ExtendedData>
+        <Data name="kind"><value>AOI</value></Data>
+        <Data name="aoi_id"><value>AOI-32N-94E</value></Data>
+        <Data name="label"><value>computed</value></Data>
+        <Data name="crs"><value>EPSG:4326</value></Data>
+        <Data name="max_magnitude"><value>5.2</value></Data>
+        <Data name="event_count"><value>3</value></Data>
+        <Data name="total_energy_j"><value>5070196799348.359</value></Data>
+      </ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>94,32,0 96,32,0 96,34,0 94,34,0 94,32,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
+    <Placemark>
+      <name>COMPUTED MASK</name>
+      <ExtendedData>
+        <Data name="kind"><value>COMPUTED MASK</value></Data>
+        <Data name="label"><value>COMPUTED MASK</value></Data>
+        <Data name="crs"><value>EPSG:4326</value></Data>
+        <Data name="prompt"><value>snow</value></Data>
+        <Data name="model"><value>sam-3.1</value></Data>
+        <Data name="mask_pixels"><value>2197</value></Data>
+        <Data name="mask_box_px"><value>[776, 377, 831, 444]</value></Data>
+        <Data name="image_source"><value>Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12, 1165x1394, Esri, Maxar, Earthstar Geographics</value></Data>
+        <Data name="note"><value>Computed mask over supplied imagery. Not measured data, not ground truth, not a prediction.</value></Data>
+      </ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>95.16632080078125,33.39189277577809,0 95.1852035522461,33.39189277577809,0 95.1852035522461,33.372685170762125,0 95.16632080078125,33.372685170762125,0 95.16632080078125,33.39189277577809,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
+    <Placemark>
+      <name>mask centroid</name>
+      <ExtendedData>
+        <Data name="kind"><value>mask centroid</value></Data>
+        <Data name="label"><value>computed</value></Data>
+        <Data name="crs"><value>EPSG:4326</value></Data>
+        <Data name="prompt"><value>snow</value></Data>
+      </ExtendedData>
+      <Point><coordinates>95.17576217651367,33.382289503637054,0</coordinates></Point>
+    </Placemark>
+  </Document>
+</kml>

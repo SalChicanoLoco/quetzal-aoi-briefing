@@ -28,6 +28,7 @@ from gis.gis_export import (  # noqa: E402
     build_gis_geojson,
     build_geodataframe,
     image_from_crop,
+    geojson_to_kml,
     image_from_sidecar,
     pixel_to_lon_lat,
     validate_gis_geojson,
@@ -284,6 +285,42 @@ class TestOutputs(unittest.TestCase):
             coords = list(back_mask.geometry.exterior.coords)
             close(coords[0][0], 95.16632080078125, 1e-6, "gpkg lon")
             close(coords[2][1], 33.372685170762125, 1e-6, "gpkg lat")
+
+    def test_kml_is_format_conversion_of_same_geojson(self):
+        import xml.etree.ElementTree as ET
+
+        fc = build_gis_geojson(
+            aoi=NAGQU_AOI,
+            mask_box=[776, 377, 831, 444],
+            mask_pixels=2197,
+            prompt="snow & ice <test>",
+            model="sam-3.1",
+            image=NAGQU_IMAGE,
+            image_source="Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12",
+        )
+        kml = geojson_to_kml(fc)
+        self.assertIn('xmlns="http://www.opengis.net/kml/2.2"', kml)
+        self.assertIn("COMPUTED MASK", kml)
+        self.assertIn("snow &amp; ice &lt;test&gt;", kml)
+        self.assertNotIn("snow & ice", kml)
+        # Well-formed XML, 3 placemarks, mask coords parse back to the ring.
+        ns = {"k": "http://www.opengis.net/kml/2.2"}
+        root = ET.fromstring(kml)
+        placemarks = root.findall(".//k:Placemark", ns)
+        self.assertEqual(len(placemarks), 3)
+        coords_text = placemarks[1].find(".//k:coordinates", ns).text.strip()
+        parsed = [
+            tuple(float(v) for v in triple.split(","))
+            for triple in coords_text.split()
+        ]
+        ring = fc["features"][1]["geometry"]["coordinates"][0]
+        self.assertEqual(len(parsed), len(ring))
+        for (lon, lat, alt), (e_lon, e_lat) in zip(parsed, ring):
+            close(lon, e_lon, 1e-9, "kml lon")
+            close(lat, e_lat, 1e-9, "kml lat")
+            self.assertEqual(alt, 0)
+        with self.assertRaises(ValueError):
+            geojson_to_kml(None)
 
     def test_world_and_prj_files_written(self):
         with tempfile.TemporaryDirectory() as tmp:

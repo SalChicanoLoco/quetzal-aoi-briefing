@@ -1,7 +1,7 @@
 # GIS export — Python implementation (GeoAI patterns)
 
 Pushed Oct 27, Salvador-approved: Python primary. This note and `gis/` are in the repo.
-The JS module `src/gis-export.mjs` stays local-only as the cross-check reference
+The JS module `src/gis-export.mjs` is in the repo as the cross-check reference
 until pushed separately. Nothing here replaces
 the label/receipt rules: the output is a COMPUTED MASK, never
 measured data, never ground truth, never a prediction.
@@ -93,7 +93,7 @@ separate, approved-later step — do not claim it is done.
   `src/gis-export.mjs` under node and diffs every coordinate.
   Worst difference **1.421e-14 degrees** (tolerance 1e-6). The JS
   checker still passes: `node test/check.mjs` = CHECK PASS,
-  `node test/gis-export.mjs` = 6/6 PASS. No existing file was edited.
+  `node test/gis-export.mjs` = 7/7 PASS (includes KML). No existing file was edited.
 - Verified numbers: Nagqu mask box [776, 377, 831, 444] -> NW
   95.16632080078125, 33.391892775778075; SE 95.1852035522461,
   33.372685170762125; centroid 95.17576217651367,
@@ -139,4 +139,4 @@ Option 1 approved: Python primary, JS reference. The other option was:
    calling the JS module, and the Python code is used for
    GeoPackage output only, on request.
 
-The JS module stays local-only as the cross-check reference; its tests keep running locally. Any future GIS change lands in Python first and is cross-checked against the JS module.
+The JS module is in the repo as the cross-check reference; its tests keep running in `node test/check.mjs`. Any future GIS change lands in Python first and is cross-checked against the JS module. KML conversion is mirrored in both (`geojson_to_kml` / `geoJsonToKml`) from the same GeoJSON, and `viewer/map-viewer.html` (Leaflet + OpenStreetMap) draws that GeoJSON in a browser with no GIS install.
