@@ -79,9 +79,9 @@ separate, approved-later step — do not claim it is done.
 
 ## Verification (2026-10-27)
 
-- Python tests: `gis/test_gis_export.py`, **20 tests, all PASS**
+- Python tests: `gis/test_gis_export.py`, **21 tests, all PASS** (20 + KML format-conversion test, Oct 27)
   (run: `~/workspace/gis-venv/bin/python -m unittest discover -s gis -p "test_*.py" -v`).
-  Covers the JS module's 6 checks, the Fiji polygon/centroid, the
+  Covers the JS module's 7 checks, the Fiji polygon/centroid, the
   Fiji crop image giving the same polygon as the full image, the
   sidecar builder, a pyproj EPSG:3857->4326 cross-check, GeoJSON
   matching the recorded `assets/nagqu-snow-mask.geojson`, a

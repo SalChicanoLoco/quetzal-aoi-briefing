@@ -54,6 +54,16 @@ the code in the same silent edit — say which one was wrong.
   string, a regex, or a strict === comparison — no real var
   declaration, no loose equality, no open TODO in the tools
   themselves.
+- Closed, Oct 27: `test/meta-check.mjs` (6/6) now lints the
+  runner files themselves — heuristic stripper (strings, regex
+  literals, comments removed, TODO-colon in comments still
+  caught), positive control requiring detection strings to
+  still be present, and an injected-violation test on a copy.
+  Its documented limit: the stripper is a heuristic scanner,
+  not a parser. `test/debug-agent.mjs` now also reports the
+  checker `exit_code` in its JSON report and FAILs when it is
+  nonzero, so a crashing test with no FAIL line can no longer
+  report a vacuous PASS (`test/debug-agent-report.mjs`, 2/2).
 
 ## What it does NOT do
 - No auto-fix, no auto-commit, no auto-push.

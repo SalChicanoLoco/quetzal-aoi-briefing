@@ -35,6 +35,8 @@ That chain — live → polygon → mask → briefing, with every step receipted
 - Local planner latency 28–38s — kills demo pacing if shown live, uncut. Demo must be edited, or the local step must be pre-run and labelled as a recorded run, not live
 - No single "wow moment" yet in the repo — the demo needs one continuous shot: feed → polygon → SAM mask → briefing, in that order, no cuts hiding a step
 
+**Update, Oct 27:** Two of the three gaps above are now closed — hosted SAM image PASS with receipts (Oct 26, Nagqu mask + Pexels smoke), and orchestrator v1 + Step 7 continuous run built and pushed (Oct 26). What is still open: the demo video (script approved and pushed Oct 27, `docs/DEMO_SCRIPT.md`, not yet shot) and the single continuous wow shot. SAM video, Wonder, and Voice Transcribe remain untested and unclaimed.
+
 **Verdict:** We can *compete* for Creative, we cannot *guarantee* it, and no one honest can. The path to competing is: finish SAM gate + orchestrator v1 + one continuous demo shot. If any of those three is missing, do not chase Creative at the expense of a clean main submission.
 
 ## 2. Creative guardrails — creativity must not break truth

@@ -50,6 +50,7 @@ let exitCode = 0;
 if (single) {
   const r = spawnSync("node", [single], { cwd: dir, encoding: "utf8" });
   output = (r.stdout || "") + (r.stderr || "");
+  if (r.error) output += String(r.error);
   exitCode = r.status ?? 1;
 } else {
   try {
@@ -68,17 +69,23 @@ for (const line of output.split("\n")) {
 }
 
 const passed = (output.match(/^PASS /gm) || []).length;
+// exitCode is the checker's own verdict, not decoration: a test file
+// can crash (assertion, syntax) without printing a FAIL line, and
+// parsing FAIL lines alone would then report a vacuous PASS. A
+// nonzero checker exit is a failure even when no FAIL line exists.
+const checkerExitCode = exitCode;
 const report = {
   generated_at: new Date().toISOString(),
   dir,
   mode: single ? `single:${single}` : "full-check",
   passed,
   failures: failures.length,
-  status: failures.length === 0 ? "PASS" : "FAIL",
+  exit_code: checkerExitCode,
+  status: failures.length === 0 && checkerExitCode === 0 ? "PASS" : "FAIL",
   items: failures,
   agent_rule: "read-only: this agent diagnoses only, it does not edit, commit, or waive rules",
 };
 
 console.log(JSON.stringify(report, null, 2));
 if (reportPath) writeFileSync(reportPath, JSON.stringify(report, null, 2));
-process.exit(failures.length === 0 ? 0 : 1);
+process.exit(report.status === "PASS" ? 0 : 1);

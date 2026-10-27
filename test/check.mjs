@@ -33,10 +33,13 @@ ok = run(["test/rules-check.mjs"], "rules-check") && ok;
 // main is allowed; library files must not log.
 const secretRe = /(api_key|bearer\s+[A-Za-z0-9]|sk-[A-Za-z0-9]{8,})/i;
 for (const dir of ["src", "test"]) {
-  // check.mjs and debug-agent.mjs are excluded: they contain the
-  // lint patterns themselves as detection/fix strings, not as
-  // violations in shipped code.
-  for (const f of readdirSync(dir).filter((x) => x.endsWith(".mjs") && x !== "check.mjs" && x !== "debug-agent.mjs")) {
+  // check.mjs, debug-agent.mjs, and meta-check.mjs are excluded:
+  // they contain the lint patterns themselves as detection/fix
+  // strings and fixtures, not as violations in shipped code.
+  // meta-check.mjs lints all three runner files itself, with a
+  // stripper that ignores strings/regexes (see test/meta-check.mjs).
+  const excluded = ["check.mjs", "debug-agent.mjs", "meta-check.mjs"];
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".mjs") && !excluded.includes(x))) {
     const text = readFileSync(`${dir}/${f}`, "utf8");
     const bad = [];
     if (/\bvar\s/.test(text)) bad.push("var");
