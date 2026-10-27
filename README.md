@@ -83,6 +83,7 @@ node test/base-agent.mjs           # base agent tests, 7/7
 node test/skill-agent.mjs          # skill-carrying agent tests, 14/14
 node test/skill-agent-blind.mjs    # blind reproduction: AOI + GIS legs, live SAM leg skipped unless --live-sam
 node test/e2e.mjs                  # end-to-end replay test, 1/1
+python -m unittest discover -s gis -p "test_*.py"  # Python GIS export tests, 20/20 (GIS venv)
 ```
 
 Mock data is explicitly labelled as mock.

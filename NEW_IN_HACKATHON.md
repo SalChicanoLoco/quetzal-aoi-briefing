@@ -36,6 +36,8 @@ This file is the new-work record judges are asked to check. Anything not listed 
 - The underlying Quetzal geophysics system, including its forecast regimes and telemetry work. Salvador's background wiring of those regimes continues during the hackathon, but the system itself predates it and is identified as such.
 - Any pre-existing Quetzal code, models, or data not in this repository.
 
+- GIS export, Python primary, Oct 27 (pushed Oct 27, Salvador-approved): `gis/gis_export.py` — GeoAI-pattern pipeline on rasterio/geopandas/shapely/pyproj, same 3-feature GeoJSON/COMPUTED MASK output as the JS module, plus GeoPackage/world file/.prj. 20 Python tests PASS, live JS cross-check worst diff 1.421e-14 deg. geoai-py itself is NOT installed, gis-mcp/Mundi NOT wired, no Rust. JS module `src/gis-export.mjs` stays local-only as cross-check reference, NOT pushed.
+
 ## Verification rule
 
 A feature is marked verified only when it has actually been run and its receipt recorded. Mock results are labelled mock. Live results are labelled with their source, time, and receipt. Nothing in this repo is presented as measured when it is computed, or as hackathon-built when it predates the hackathon.
