@@ -13,26 +13,27 @@ Nothing in the demo is presented as a deterministic prediction.
 
 ## Milestones
 
-### Mon Oct 26 — Kickoff, scope freeze by end of day
+### Mon Oct 26 — Kickoff, scope freeze, Steps 2–7 built
 - Repo live, starter + smoke batch pushed. DONE.
 - Spark + Image smoke tests PASS. DONE.
-- SAM hosted gate: confirm image vs video path, then one call. If it fails, fallback is local open-weights SAM, labelled local.
-- Team formation: Builders replies, up to 3 seats, max team 4.
-- Scope freeze EOD: only verified tools stay in. Everything else is parked.
+- SAM hosted image PASS, Nagqu discrete snow mask PASS (1 box, 1 mask, 2197 pixels). AOI-scale SAM gave 0 masks, recorded honestly. Video path documented, NOT smoke-tested.
+- Scope freeze: only verified tools stay in — Spark, Image, hosted SAM image. Everything else is parked.
+- Steps 2–7 pushed by end of day: orchestrator, label/receipt gate, SAM bridge, Spark briefing, generated visual (binary in repo), one continuous E2E run, agents + checker. Full check PASS, debug-agent PASS 33/0.
+- Solo startup, Oct 26: TEAM.md deleted, no team formation, no prospect tracking. Founder = Salvador Sena, + Morath/agents. Founder recruits on his side if help is needed.
 
-### Tue Oct 27 — Orchestrator v1
-- Live telemetry adapter (mock to live, with labels kept).
-- AOI generation to briefing template, end to end, one AOI.
-- Session: Agents 101, 12:00 PM ET.
+### Tue Oct 27 — Demo prep, not a rebuild
+- Step 5 refinements if time: Nagqu + snow mask combined Spark briefing, bare-number validator, prompt polish.
+- Agents 101 session, 12:00 PM ET (10:00 AM MDT).
+- Rofaida's earlier visual assignment is superseded by the solo decision — no team work is blocked on, or assigned by, Morath.
 
-### Wed Oct 28 — Verifiable agents
-- Receipt and label tests: measured vs computed vs inferred, no mixing.
+### Wed Oct 28 — Verifiable agents, already built
+- Receipt and label tests: measured vs computed vs inferred, no mixing — built Oct 26, in repo.
 - Mock vs live results labelled, every time.
 - Session: Agents 102, 12:00 PM ET.
 
-### Thu Oct 29 — Visual bridge
-- SAM mask + Image visual integrated into the briefing, with sources labelled.
-- Generated basemap, if used, labelled GENERATED. Never present a generated image as satellite data. Never repaint a SAM mask.
+### Thu Oct 29 — Visual bridge, already built
+- SAM mask + Image visual integrated into the briefing, with sources labelled — built Oct 26.
+- Generated image, labelled GENERATED. Never present a generated image as satellite data. Never repaint a SAM mask.
 
 ### Fri Oct 30 — Partner check, only if time
 - Session: Fireworks, 12:00 PM ET.

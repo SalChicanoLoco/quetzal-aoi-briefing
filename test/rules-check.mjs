@@ -22,7 +22,8 @@ function walk(dir, out = []) {
 const files = walk(root).filter(f => !f.endsWith('rules-check.mjs'));
 
 // 1. Required docs exist
-for (const req of ['README.md', 'NEW_IN_HACKATHON.md', 'docs/PLAN.md', 'docs/API.md', 'docs/TEAM.md', 'docs/RULES_ADHERENCE_AGENT.md']) {
+for (const req of ['README.md', 'NEW_IN_HACKATHON.md', 'docs/PLAN.md', 'docs/API.md', 'docs/RULES_ADHERENCE_AGENT.md']) {
+  // docs/TEAM.md removed Oct 26 — solo startup, no team doc. Do not re-add it here.
   if (!existsSync(join(root, req))) failures.push(`Missing required file: ${req}`);
 }
 

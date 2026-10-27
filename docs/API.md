@@ -42,7 +42,8 @@ Log prompt / completion / reasoning tokens on every call.
 
 ## Credits discipline
 
-- $150 per participant, claimed individually, cannot be claimed for someone else.
+- $150 Meta Model API credits, founder's account, claimed Oct 26. No teammate credits are used, shared, or claimed for anyone else — solo startup, Oct 26.
 - A card must be on the account to make an API call. Set a Spend Limit notification on the Billing page first.
 - Log every live call: model, tokens, time, request id, receipt.
 - Tiny prompts, one AOI at a time, standard tier, not contributor, for proprietary work.
+- Step 7 live receipts, Oct 26: E2E feed qz-req-296740b69ea2 (197 events, 68 cells, Fiji AOI--20N--180E, M5.5) and qz-req-f2948c998ac3 (reproducibility run, same top AOI/magnitude); Spark chatcmpl-01a17a97-7bad-7364-bc65-3d6654fa8f4f (233/635/868) and chatcmpl-01a17a9a-21d2-75d3-a7b8-ba15718e652f (233/1414/1647, validator 0). Live latency varied 1s–20s Oct 26 — Step 7 uses a 60s live timeout, not the old 10s one.

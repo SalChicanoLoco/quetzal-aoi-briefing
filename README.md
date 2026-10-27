@@ -71,10 +71,16 @@ The repository includes an orchestrator that can run with mock telemetry, withou
 ```bash
 node src/orchestrator.mjs          # mock mode, labelled mock
 node src/orchestrator.mjs --live   # live Quetzal feed, falls back to labelled mock on failure
+node src/e2e.mjs                   # one continuous run: live feed -> AOI -> label gate -> SAM leg -> Spark prompt (60s live timeout)
+node test/check.mjs                # full check: syntax + all unit tests + rules + lint, zero dependencies
+node test/debug-agent.mjs          # read-only diagnostic agent: classifies failures, suggests fixes, never edits/commits/waives
 node test/orchestrator-v1.mjs      # AOI generation tests
 node test/label-receipt.mjs        # label and receipt gate tests
 node test/sam-bridge.mjs           # SAM bridge tests
 node test/spark-briefing.mjs       # Spark briefing tests
+node test/generated-visual.mjs     # generated visual contract tests
+node test/base-agent.mjs           # base agent tests, 7/7
+node test/e2e.mjs                  # end-to-end replay test, 1/1
 ```
 
 Mock data is explicitly labelled as mock.
@@ -85,15 +91,18 @@ No API keys, tokens, or other secrets belong in GitHub commits.
 
 ## Current status — October 26, 2026
 
-This is an active build, not a finished production system — but it is past skeleton stage. Steps 2 through 5 of the production plan are built, tested, and in this repository:
+This is an active build, not a finished production system — but it is past skeleton stage. Steps 2 through 7 of the production plan, plus the agent/checker system, are built, tested, and in this repository. Solo startup: Salvador Sena, founder, + Morath/agents. No team doc — `docs/TEAM.md` was deleted Oct 26, and the founder recruits on his side if help is needed.
 
 - **Orchestrator v1:** live Quetzal telemetry in, real 2°-grid AOI out. Live run: 200 events, 66 cells, top cell Fiji-area, M5.5, 1.12e13 joules [computed], receipt source quetzal-live.
 - **Label and receipt gate:** every briefing is checked for measured / computed / inferred labels and a receipt with source and time. The gate is proven to fail bad briefings, not just pass good ones. The live run above passes it with 0 failures.
-- **SAM visual bridge:** AOI polygon to bounding box, SAM result validator, mask record labelled COMPUTED MASK only. A vector map and an AOI-wide satellite view both returned 0 masks from hosted SAM — recorded honestly, not claimed. A higher-zoom satellite crop inside the Nagqu AOI (94.9–95.3°E, 33.1–33.5°N, Esri World Imagery, zoom 12) did produce a real hosted SAM mask: prompt "snow", 1 box, 1 mask, 2197 pixels, bridge validator 0 failures. That mask is for a discrete snow feature inside the AOI, not for the whole 2° cell.
+- **SAM visual bridge:** AOI polygon to bounding box, SAM result validator, mask record labelled COMPUTED MASK only. A vector map and an AOI-wide satellite view both returned 0 masks from hosted SAM — recorded honestly, not claimed. A higher-zoom satellite crop inside the Nagqu AOI (94.9–95.3°E, 33.1–33.5°N, Esri World Imagery, zoom 12) did produce a real hosted SAM mask: prompt "snow", 1 box, 1 mask, 2197 pixels, bridge validator 0 failures. That mask is for a discrete snow feature inside the AOI, not for the whole 2° cell, and not for the Fiji AOI.
 - **Spark briefing v1:** prompt builder using only receipted numbers, plus a briefing validator. Live Spark run on the Fiji AOI above: muse-spark-1.3, 2 sentences, forecast language only, validator 0 failures. Refinement comes later — a combined Nagqu AOI + snow mask briefing, tighter number checking, and prompt polish.
-- **Live smoke tests, documented in `docs/API.md`:** Muse Spark 1.3, Muse Image 1.0, and SAM 3.1 (image path) all PASS, with receipts.
+- **Generated visual (Step 6):** stylised concept illustration, labelled GENERATED VISUAL only, never a map, satellite, mask, or data. Live Image run Oct 26 for AOI--20N--180E: muse-image-1.0, status 200, WebP 1600x1600, 564K, file `assets/generated-visual-fiji.webp` in this repo, record `assets/generated-visual-fiji.json`, validator 0 failures. Binary upload route and SHA-256 receipt in `assets/ASSETS.md`.
+- **One continuous run (Step 7):** `src/e2e.mjs`, one process, no manual edits between steps: live feed (60s timeout, because live latency varied 1s–20s Oct 26 and the old 10s timeout fell back to mock) → AOI polygon → label/receipt gate → SAM mask leg, labelled separately → Spark prompt. Live run Oct 26: request qz-req-296740b69ea2, 197 events, 68 cells, Fiji AOI--20N--180E, M5.5, 1.122e13 J, label 0, SAM 0. Spark live on that AOI: muse-spark-1.3, request chatcmpl-01a17a97-7bad-7364-bc65-3d6654fa8f4f, 233/635/868 tokens, validator 0, briefing states no mask is claimed in that run. A second live run Oct 26 reproduced the same top AOI and magnitude (request qz-req-f2948c998ac3, Spark chatcmpl-01a17a9a-21d2-75d3-a7b8-ba15718e652f, validator 0). Receipt: `assets/e2e-live-receipt.json`.
+- **Agents and checker:** `src/base-agent.mjs` (one base, roles plug in later, 7/7 tests), `test/check.mjs` (full check, zero dependencies, CHECK PASS), `test/debug-agent.mjs` (read-only diagnostic, PASS 33/0). Framework in `docs/testing-debug-agent-framework.md`, including its known blind spot: check excludes its own runner files from test/lint loops, so a `var` added to a runner file was not caught by the checker itself — a distinct meta-checker with an explicit allowlist is the proposed fix, not a claim of self-validation.
+- **Live smoke tests, documented in `docs/API.md`:** Muse Spark 1.3, Muse Image 1.0, and SAM 3.1 (image path) all PASS, with receipts. Hosted SAM video is documented but NOT smoke-tested — do not claim it until a short clip runs with a receipt.
 
-Still to do: the hosted SAM video smoke test, the generated visual labelled GENERATED (step 6 in the plan), one continuous end-to-end run (feed → polygon → SAM mask → Spark briefing, no cuts hiding a step), and the 3-minute demo video showing only hackathon-built work.
+Still to do: Step 8, the 3-minute demo video showing only hackathon-built work (video itself submitted via CV/YouTube, repo holds script, link, thumbnail, receipt — not a large GitHub binary), Step 9 packaging (logged-out repo check, secrets scan), and Step 10 submission by target noon ET Nov 4, hard deadline 9:00 PM ET Nov 4. Step 5 refinements remain deferred: Nagqu + snow mask combined Spark briefing, bare-number validator tightening, prompt polish.
 
 As each component is tested, we'll document the results and supporting receipts. I'm not interested in presenting a mock result as a live scientific observation.
 
