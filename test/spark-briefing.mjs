@@ -29,5 +29,34 @@ check("validator fails invented magnitude", validateSparkBriefing(badMag, aoi).l
 const noId = good.replace(aoi.id, "somewhere");
 check("validator fails missing AOI id", validateSparkBriefing(noId, aoi).length > 0);
 
+// v2 — bare numbers, not just M-prefixed magnitudes.
+const badBare = `${good} The chance is 42 percent.`;
+check("validator fails invented bare number", validateSparkBriefing(badBare, aoi).length > 0);
+const goodEnergy = `${good} Total radiated energy is ${aoi.total_energy_joules} joules computed.`;
+check("validator passes context energy number", validateSparkBriefing(goodEnergy, aoi).length === 0,
+  validateSparkBriefing(goodEnergy, aoi).join("; "));
+
+// v2 — combined AOI + mask briefing, Nagqu snow mask fixture.
+// Fixture AOI here is the orchestrator fixture (AOI-32N-94E);
+// the mask is the real Nagqu snow mask record shape, not a Fiji mask.
+import { readFileSync } from "node:fs";
+const maskFixture = JSON.parse(readFileSync(new URL("./sam-fixture.json", import.meta.url), "utf8"));
+const maskRecord = {
+  mask_label: "COMPUTED MASK",
+  model: maskFixture.model,
+  prompt: maskFixture.prompt,
+  image_source: maskFixture.image_source,
+  mask_pixels: maskFixture.mask_pixels,
+  box: maskFixture.box,
+};
+const nagquPrompt = buildSparkPrompt(aoi, receipt, maskRecord);
+check("combined prompt includes mask pixels", nagquPrompt.includes(String(maskRecord.mask_pixels)));
+check("combined prompt says COMPUTED MASK only", /Describe that mask only as a COMPUTED MASK/i.test(nagquPrompt));
+check("combined prompt forbids rounding", /Do not round/i.test(nagquPrompt));
+const combinedGood = `${good} The COMPUTED MASK for this AOI has ${maskRecord.mask_pixels} mask pixels.`;
+check("combined briefing passes with mask context", validateSparkBriefing(combinedGood, aoi, receipt, maskRecord).length === 0,
+  validateSparkBriefing(combinedGood, aoi, receipt, maskRecord).join("; "));
+check("combined briefing fails without mask context", validateSparkBriefing(combinedGood, aoi, receipt).length > 0);
+
 if (checks.some((c) => !c)) process.exit(1);
 console.log("Spark briefing tests PASS");
