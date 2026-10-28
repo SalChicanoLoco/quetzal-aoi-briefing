@@ -1,0 +1,122 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "kind": "AOI",
+        "aoi_id": "AOI--20N--180E",
+        "label": "computed",
+        "crs": "EPSG:4326",
+        "max_magnitude": 5.5,
+        "event_count": 1,
+        "total_energy_j": 11220184543019.652
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -180,
+              -20
+            ],
+            [
+              -178,
+              -20
+            ],
+            [
+              -178,
+              -18
+            ],
+            [
+              -180,
+              -18
+            ],
+            [
+              -180,
+              -20
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "kind": "COMPUTED MASK",
+        "label": "COMPUTED MASK",
+        "crs": "EPSG:4326",
+        "prompt": "island",
+        "model": "sam-3.1",
+        "mask_pixels": 3523,
+        "mask_box_px": [
+          302,
+          1005,
+          418,
+          1068
+        ],
+        "image_source": "Esri World Imagery, sub-bbox -178.6 to -178.2, -18.5 to -18.1, zoom 12, 1165x1228, Esri, Maxar, Earthstar Geographics",
+        "note": "Computed mask over supplied imagery. Not measured data, not ground truth, not a prediction. Separate discrete-feature leg inside the Fiji AOI; the Step 7 live run itself claimed no mask.",
+        "mask_h_px": 63,
+        "mask_w_px": 116,
+        "mask_box_px_in_crop": [
+          182,
+          205,
+          298,
+          268
+        ],
+        "full_image_prompts_zero_masks": [
+          "island",
+          "reef",
+          "land"
+        ],
+        "crop_prompt_zero_masks": [
+          "reef"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -178.49624633789062,
+              -18.427501971948598
+            ],
+            [
+              -178.4564208984375,
+              -18.427501971948598
+            ],
+            [
+              -178.4564208984375,
+              -18.448021023457002
+            ],
+            [
+              -178.49624633789062,
+              -18.448021023457002
+            ],
+            [
+              -178.49624633789062,
+              -18.427501971948598
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "kind": "mask centroid",
+        "label": "computed",
+        "crs": "EPSG:4326",
+        "prompt": "island"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -178.47633361816406,
+          -18.437761803935633
+        ]
+      }
+    }
+  ]
+}

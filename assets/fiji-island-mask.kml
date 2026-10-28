@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>COMPUTED MASK — Quetzal AOI Briefing</name>
+    <description>Computed mask over supplied imagery. Not measured data, not ground truth, not a prediction.</description>
+    <Placemark>
+      <name>AOI</name>
+      <ExtendedData>
+        <Data name="kind"><value>AOI</value></Data>
+        <Data name="aoi_id"><value>AOI--20N--180E</value></Data>
+        <Data name="label"><value>computed</value></Data>
+        <Data name="crs"><value>EPSG:4326</value></Data>
+        <Data name="max_magnitude"><value>5.5</value></Data>
+        <Data name="event_count"><value>1</value></Data>
+        <Data name="total_energy_j"><value>11220184543019.652</value></Data>
+      </ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-180,-20,0 -178,-20,0 -178,-18,0 -180,-18,0 -180,-20,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
+    <Placemark>
+      <name>COMPUTED MASK</name>
+      <ExtendedData>
+        <Data name="kind"><value>COMPUTED MASK</value></Data>
+        <Data name="label"><value>COMPUTED MASK</value></Data>
+        <Data name="crs"><value>EPSG:4326</value></Data>
+        <Data name="prompt"><value>island</value></Data>
+        <Data name="model"><value>sam-3.1</value></Data>
+        <Data name="mask_pixels"><value>3523</value></Data>
+        <Data name="mask_box_px"><value>[302, 1005, 418, 1068]</value></Data>
+        <Data name="image_source"><value>Esri World Imagery, sub-bbox -178.6 to -178.2, -18.5 to -18.1, zoom 12, 1165x1228, Esri, Maxar, Earthstar Geographics</value></Data>
+        <Data name="note"><value>Computed mask over supplied imagery. Not measured data, not ground truth, not a prediction. Separate discrete-feature leg inside the Fiji AOI; the Step 7 live run itself claimed no mask.</value></Data>
+        <Data name="mask_h_px"><value>63</value></Data>
+        <Data name="mask_w_px"><value>116</value></Data>
+        <Data name="mask_box_px_in_crop"><value>[182, 205, 298, 268]</value></Data>
+        <Data name="full_image_prompts_zero_masks"><value>['island', 'reef', 'land']</value></Data>
+        <Data name="crop_prompt_zero_masks"><value>['reef']</value></Data>
+      </ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-178.49624633789062,-18.427501971948598,0 -178.4564208984375,-18.427501971948598,0 -178.4564208984375,-18.448021023457002,0 -178.49624633789062,-18.448021023457002,0 -178.49624633789062,-18.427501971948598,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
+    <Placemark>
+      <name>mask centroid</name>
+      <ExtendedData>
+        <Data name="kind"><value>mask centroid</value></Data>
+        <Data name="label"><value>computed</value></Data>
+        <Data name="crs"><value>EPSG:4326</value></Data>
+        <Data name="prompt"><value>island</value></Data>
+      </ExtendedData>
+      <Point><coordinates>-178.47633361816406,-18.437761803935633,0</coordinates></Point>
+    </Placemark>
+  </Document>
+</kml>
