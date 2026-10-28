@@ -47,3 +47,15 @@ uploaded file by SHA-256.
 3. Check the file appears at that path, then tell Morath — he
    will verify it reads back from main and update this file's
    upload status.
+
+## Fiji island SAM mask crop — source image for the Fiji mask
+
+- File: `assets/fiji-island-crop.png`
+- Label: SOURCE IMAGE — Esri satellite crop, southern island only,
+  580x380 px. The SAM mask derived from it is in
+  `assets/fiji-island-mask.geojson` / `assets/fiji-island-mask.kml`.
+  A crop, not a survey map.
+- Dimensions: 580x380, size: 233,602 bytes.
+- SHA-256: `894fffc4767391034d0bf424debde9867369863e13c4d1e1ed847cfb78259088`
+- SAM record: prompt "island", 1 box, 1 mask, 3523 px.
+- Added by upload-fiji-crop.sh; verify against the SHA-256 above.
