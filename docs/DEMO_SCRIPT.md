@@ -142,6 +142,29 @@ This script hits all four on purpose, in this order:
   showing credentials. Frame-by-frame check before publish (G1).
 - No music or footage without a rights note; none is planned.
 
+## Methods + Footnotes (approved 2026-10-28, from the AST audit draft, §8 of `ast-audit-2026-10-28.md`)
+
+Methods — for the demo description / repo README methods section. Oct 26 numbers below are templates; shoot-day numbers replace them, from the shoot-day receipt only.
+
+How the briefing is made. Live seismic telemetry from the Quetzal Cloud Run backend is fetched by one continuous run (`src/e2e.mjs`, 60-second timeout). The highest-energy 2-degree cell — energy by the Gutenberg–Choy relation, `log10(E) = 4.8 + 1.5M` — becomes the area of interest; its polygon and centroid are computed locally and labelled computed, while magnitude, location, and event count are labelled measured. A label and receipt gate (`src/labels.mjs`) fails the run closed on any prediction claim or missing receipt.
+
+The briefing text is written by Muse Spark 1.3 (standard tier), called by the operator with the prompt this code builds (`src/spark-briefing.mjs`): the prompt contains only numbers from the area of interest, the receipt, and the mask record, asks for exactly two sentences in forecast language, and forbids prediction claims and new numbers. Spark does not run inside the shipped code — there is no API call in the repository; the operator makes the call with their own key and records the request ID. The returned text is checked by the briefing validator (`src/spark-briefing.mjs`, `validateSparkBriefing`, bare-number and prediction checks) before it is shown. [Shoot-day: insert the fresh request ID and token counts here, and the validator result, from the shoot-day receipt only.]
+
+Segmentation is Muse SAM 3.1 (hosted), called the same way: the operator supplies a satellite image and a text prompt, SAM returns boxes and masks, and this code validates the supplied result (`src/sam-bridge.mjs` — completed outcome, empty diagnostics, at least one box and mask, positive pixels, named image source) and labels it COMPUTED MASK. The mask box is projected to a real polygon — GeoJSON and KML, in the WGS 84 / EPSG:4326 frame — so the feature can be opened in a GIS without hunting for it. [Shoot-day: insert the fresh SAM receipt — box, mask pixels, image source, bbox, zoom — here.]
+
+The illustration is Muse Image 1.0, called the same way; its record (`src/generated-visual.mjs`) labels it GENERATED VISUAL, illustration only, never data, never a map, never a mask. [Shoot-day: insert the fresh image receipt — SHA-256 and file — here.]
+
+Orchestration is a fixed seven-step spine (`src/spine.mjs`): static routes, fixed order, per-step timeouts, fail-closed gates, and a per-step ledger of route, outcome, latency, and cost estimate. Nothing in the spine learns or reorders steps; the ledger is the scored record a future router would learn from. A human approves every step — the operator runs the live calls, checks the validators, and shoots the demo. Pre-existing work is credited on screen: the Quetzal geophysics system underneath predates the hackathon; the briefing pipeline, gates, GIS export, skill agents, and checks were built during the event, Oct 26–Nov 4, 2026.
+
+Footnotes — for the demo page / submission form footnotes.
+
+1. Spark briefing: Muse Spark 1.3 (standard tier), `reasoning_effort: minimal`, `max_tokens: 8192`. Oct 26 receipted briefings: `chatcmpl-01a17967-…` (Bonin smoke, 263 tokens), `chatcmpl-01a179fb-…` (Fiji AOI, 698 tokens), `chatcmpl-01a17a97-…` (continuous-run Fiji AOI, 868 tokens), `chatcmpl-01a17a9a-…` (reproducibility run, 1,647 tokens), `chatcmpl-01a17ac3-…` (Nagqu fixture AOI + snow mask, 1,885 tokens; fixture, not a live feed). Full IDs in `docs/API.md` and `NEW_IN_HACKATHON.md`. The shipped code builds the prompt and validates the text; it does not call the API. Shoot-day numbers replace these template numbers.
+2. SAM segmentation: Muse SAM 3.1 (hosted image path). Oct 26–27 receipted masks: Nagqu snow, 1 box [776,377,831,444], 1 mask, 2,197 pixels; blind re-run 2,198 pixels; Fiji island, 1 mask, 3,523 pixels. Hosted SAM video was not tested and is not claimed. Local SAM2 work is separate and is not presented as hosted SAM.
+3. Generated visual: Muse Image 1.0, 1600×1600 WebP, SHA-256 `b3281c30a576d1abad4ea1db39559f9192d4e3452691ff850ef5e24091a34a52` (`assets/generated-visual-fiji.json`). Illustration only.
+4. Labels: measured = magnitude, location, event count; computed = energy, polygon, centroid, mask; inferred = interpretation. Forecast language only — "forecast hotspot", "worth more observation" — never "earthquake prediction." Every number shown traces to a shoot-day receipt; Oct 26 numbers in this document are templates.
+5. Models not used: Muse Wonder 1.0 and Muse Voice Transcribe 1.0 were listed but never called; no contributor-tier model was used for proprietary work; no local model is presented as a Meta model. Voiceover in the demo is the founder's human voice.
+6. Verification: fresh-clone `node test/check.mjs` CHECK PASS; AST audit Oct 28 (acorn 8.15.0 + ESLint 10.0.0, first real ESLint run: 5 unused-binding findings, no undefined names, no unreachable code); Python GIS suite 22/22 in the working copy. The Spark text validator runs in the tester skill and tests; on the shoot-day run the operator runs it on the returned text and records the result — it is not wired into `src/e2e.mjs` or `src/spine.mjs` as coded. That is the one gate gap on the demo path, and it is closed by the operator step at shoot-day, not by a code change claimed here.
+
 ## Before shooting
 
 1. Salvador approves this script (and rewrites narration as he likes).
