@@ -123,6 +123,16 @@ export const WGS84_PRJ =
 export function buildGisGeoJson({ aoi, maskBox, maskPixels, prompt, model, image, imageSource }) {
   if (!aoi || !Array.isArray(aoi.polygon)) throw new Error("gis-export: AOI polygon is required");
   if (!Array.isArray(maskBox)) throw new Error("gis-export: mask box is required");
+  // B1 fix: makeAOI emits events_used / total_energy_joules; older
+  // hand-built AOIs (and the recorded assets) use events /
+  // total_energy. Accept the real shape first, fall back to the
+  // legacy spelling, and fail closed if neither is present —
+  // never silently ship an AOI feature with the fields dropped.
+  const eventCount = aoi.events_used ?? aoi.events;
+  const totalEnergy = aoi.total_energy_joules ?? aoi.total_energy;
+  if (typeof eventCount !== "number" || typeof totalEnergy !== "number") {
+    throw new Error("gis-export: AOI needs events_used/total_energy_joules (makeAOI) or events/total_energy");
+  }
   const maskPolygon = boxToPolygon(maskBox, image);
   const centroid = boxCentroid(maskBox, image);
   return {
@@ -136,8 +146,8 @@ export function buildGisGeoJson({ aoi, maskBox, maskPixels, prompt, model, image
           label: "computed",
           crs: "EPSG:4326",
           max_magnitude: aoi.max_magnitude,
-          event_count: aoi.events,
-          total_energy_j: aoi.total_energy,
+          event_count: eventCount,
+          total_energy_j: totalEnergy,
         },
         geometry: { type: "Polygon", coordinates: [aoi.polygon] },
       },

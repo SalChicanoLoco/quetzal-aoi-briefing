@@ -45,6 +45,26 @@ localAsHosted.model = "meta-sam-vit_b-local"; localAsHosted.source = "hosted";
 expectFail("local model claimed as hosted", localAsHosted);
 const notCompleted = structuredClone(RECORDED_HOSTED_SHAPE); notCompleted.outcome = "failed";
 expectFail("outcome not completed", notCompleted);
+const noBox = structuredClone(RECORDED_HOSTED_SHAPE); delete noBox.box;
+expectFail("missing box", noBox);
+const shortBox = structuredClone(RECORDED_HOSTED_SHAPE); shortBox.box = [231, 403, 264];
+expectFail("box with 3 numbers", shortBox);
+const nanBox = structuredClone(RECORDED_HOSTED_SHAPE); nanBox.box = [231, 403, Number.NaN, 558];
+expectFail("box with NaN", nanBox);
+const fracBoxes = structuredClone(RECORDED_HOSTED_SHAPE); fracBoxes.boxes = 1.5;
+expectFail("fractional boxes", fracBoxes);
+const fracPixels = structuredClone(RECORDED_HOSTED_SHAPE); fracPixels.mask_pixels = 2197.5;
+expectFail("fractional mask pixels", fracPixels);
+const stringDiag = structuredClone(RECORDED_HOSTED_SHAPE); stringDiag.diagnostics = "()";
+expectFail("diagnostics as string", stringDiag);
+const errorDiag = structuredClone(RECORDED_HOSTED_SHAPE); errorDiag.diagnostics = "error!";
+expectFail("diagnostics as error string", errorDiag);
+const noSource = structuredClone(RECORDED_HOSTED_SHAPE); delete noSource.source;
+expectFail("missing source", noSource);
+const zeroPixels = structuredClone(RECORDED_HOSTED_SHAPE); zeroPixels.mask_pixels = 0;
+expectFail("zero mask pixels", zeroPixels);
+const zeroBoxes = structuredClone(RECORDED_HOSTED_SHAPE); zeroBoxes.boxes = 0;
+expectFail("zero boxes", zeroBoxes);
 
 let threw = false;
 try { buildMaskRecord(aoi, noMask); } catch { threw = true; }

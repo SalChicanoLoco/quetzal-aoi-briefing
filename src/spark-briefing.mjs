@@ -51,40 +51,73 @@ export function buildSparkPrompt(aoi, receipt, maskRecord = null) {
   return lines.join("\n");
 }
 
-// Numbers allowed in a briefing: every number in the AOI, the
-// receipt, and (if given) the mask record, plus the numbers
-// inside the AOI id itself (which is required verbatim).
-// Receipt time components (year, month, day, hour, minute,
-// second) are allowed only when a receipt is passed, so a
-// briefing that echoes its receipt time does not fail, but a
-// briefing that invents a date does.
+// Numbers allowed in a briefing: exactly the AOI's numeric
+// fields, the mask record's numeric fields, numeric receipt
+// counts, and the receipt's time components — nothing scraped
+// from free-text strings.
+//
+// B3 fix: the old version scraped numbers out of image_source,
+// model, prompt, request_id, and fetch_ms. A briefing could
+// then "pass" while inventing a depth (33.1, from the image
+// sub-bbox), a latency (12345, from fetch_ms), or a
+// probability (12, from "zoom 12" in the image source),
+// because those digits happened to appear in context text.
+// Free-text numbers are NOT evidence. Only a number that is
+// itself a numeric field of the AOI, receipt, or mask record
+// — or a component of the receipt timestamp — whitelists a
+// number in the briefing. fetch_ms is deliberately excluded:
+// latency is a run detail, never a briefing fact. request_id,
+// source, model, prompt, and image_source are strings; no
+// number inside them is allowed.
 export function allowedNumbers(aoi, receipt = null, maskRecord = null) {
   const out = new Set();
-  const addText = (s) => {
-    if (s === null || s === undefined) return;
-    for (const m of String(s).matchAll(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/gi)) {
-      out.add(m[0]);
-      out.add(String(Number(m[0])));
+  const addNumber = (v) => {
+    if (typeof v !== "number" || !Number.isFinite(v)) return;
+    out.add(String(v));
+  };
+  const addNumbers = (values) => {
+    if (!Array.isArray(values)) return;
+    for (const v of values) {
+      if (Array.isArray(v)) addNumbers(v);
+      else addNumber(v);
     }
   };
-  addText(aoi.id);
-  if (aoi.polygon) addText(JSON.stringify(aoi.polygon));
-  if (aoi.centroid) { addText(aoi.centroid.latitude); addText(aoi.centroid.longitude); }
-  addText(aoi.events_used); addText(aoi.max_magnitude); addText(aoi.total_energy_joules);
-  if (aoi.cells_ranked) addText(aoi.cells_ranked);
+  // AOI id numbers are handled by validateSparkBriefing, which
+  // strips the id from the text before the bare-number check;
+  // they are not added here, so an id's digits cannot whitelist
+  // an unrelated number elsewhere in the briefing.
+  if (aoi.polygon) addNumbers(aoi.polygon);
+  if (aoi.centroid) { addNumber(aoi.centroid.latitude); addNumber(aoi.centroid.longitude); }
+  addNumber(aoi.events_used); addNumber(aoi.max_magnitude); addNumber(aoi.total_energy_joules);
+  addNumber(aoi.cells_ranked);
+  // Legacy numeric spellings, if a caller supplies them: numeric
+  // fields only, never scraped from a string.
+  addNumber(aoi.events); addNumber(aoi.total_energy);
   if (receipt) {
-    addText(receipt.source);
-    addText(receipt.fetched_at ?? receipt.generated_at);
-    addText(receipt.request_id); addText(receipt.events); addText(receipt.fetch_ms);
+    // Numeric receipt counts only (e.g. events received). Never
+    // fetch_ms, never any number inside a string field.
+    addNumber(receipt.events); addNumber(receipt.events_received);
+    // Receipt time components only: a briefing that echoes its
+    // receipt date/time does not fail, but a briefing that
+    // invents a date does. The timestamp is a structured field,
+    // not free text: its number tokens are extracted with the
+    // same regex the validator scans briefing text with, so a
+    // date written "2026-10-26" yields the tokens the scan
+    // sees (2026, -10, -26, 0, ...). No other string field is
+    // scanned this way.
+    const stamp = receipt.fetched_at ?? receipt.generated_at;
+    if (typeof stamp === "string") {
+      for (const m of stamp.matchAll(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/g)) {
+        out.add(m[0]);
+        out.add(String(Number(m[0])));
+      }
+    }
   }
   if (maskRecord) {
-    addText(maskRecord.mask_pixels); addText(maskRecord.boxes); addText(maskRecord.masks);
-    if (maskRecord.box) addText(JSON.stringify(maskRecord.box));
-    // Image source and model strings carry numbers too (sub-bbox
-    // coordinates, zoom, image size, model version sam-3.1).
-    // A briefing that echoes them is using context numbers, not
-    // inventing new ones — so they are allowed, not flagged.
-    addText(maskRecord.image_source); addText(maskRecord.model); addText(maskRecord.prompt);
+    // Numeric mask fields only: pixel/box counts and the box
+    // coordinates. Never image_source, model, or prompt text.
+    addNumber(maskRecord.mask_pixels); addNumber(maskRecord.boxes); addNumber(maskRecord.masks);
+    if (maskRecord.box) addNumbers(maskRecord.box);
   }
   return out;
 }

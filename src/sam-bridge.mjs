@@ -51,13 +51,27 @@ export function validateSamResult(result) {
   if (result.model !== "sam-3.1" && result.model !== "meta-sam-vit_b-local") {
     fail(`model is ${JSON.stringify(result.model)}, expected sam-3.1 or meta-sam-vit_b-local`);
   }
+  if (result.source !== "hosted" && result.source !== "local") {
+    fail(`source is ${JSON.stringify(result.source)}, expected hosted or local`);
+  }
   if (result.outcome !== "completed") fail(`outcome is ${JSON.stringify(result.outcome)}, expected completed`);
-  if (Array.isArray(result.diagnostics) && result.diagnostics.length > 0) {
+  // Diagnostics must be an array: a string such as "()" or "error!"
+  // must never pass silently — a string is how a failed run gets
+  // read as clean. Normalise string forms in src/sam-record.mjs
+  // before validating; do not loosen this gate.
+  if (!Array.isArray(result.diagnostics)) {
+    fail(`diagnostics is not an array: ${JSON.stringify(result.diagnostics)}`);
+  } else if (result.diagnostics.length > 0) {
     fail(`diagnostics not empty: ${result.diagnostics.join(", ")}`);
   }
-  if (typeof result.boxes !== "number" || result.boxes < 1) fail("no boxes in SAM result");
-  if (typeof result.masks !== "number" || result.masks < 1) fail("no masks in SAM result");
-  if (typeof result.mask_pixels !== "number" || result.mask_pixels <= 0) fail("mask pixels not positive");
+  if (typeof result.boxes !== "number" || !Number.isInteger(result.boxes) || result.boxes < 1) fail("no boxes in SAM result");
+  if (typeof result.masks !== "number" || !Number.isInteger(result.masks) || result.masks < 1) fail("no masks in SAM result");
+  if (typeof result.mask_pixels !== "number" || !Number.isInteger(result.mask_pixels) || result.mask_pixels <= 0) fail("mask pixels not positive");
+  // Box is required: downstream steps project it, and a result with
+  // no box used to pass here and throw later, outside any gate.
+  if (!Array.isArray(result.box) || result.box.length !== 4 || !result.box.every((n) => typeof n === "number" && Number.isFinite(n))) {
+    fail(`box is not 4 finite numbers: ${JSON.stringify(result.box)}`);
+  }
   if (typeof result.prompt !== "string" || result.prompt.length === 0) fail("missing SAM prompt");
   if (typeof result.image_source !== "string" || result.image_source.length === 0) {
     fail("missing image_source — a mask without a named image is not shippable");

@@ -8,6 +8,7 @@ import {
   validateGisGeoJson,
   geoJsonToKml,
 } from "../src/gis-export.mjs";
+import { makeAOI, fixtureTelemetry } from "../src/orchestrator.mjs";
 
 // Real Nagqu z12 sidecar: bbox 94.9-95.3E, 33.1-33.5N, zoom 12,
 // tiles x 3127-3132, y 1643-1648, crop [192, 17, 1357, 1411],
@@ -86,8 +87,8 @@ check("GeoJSON builds and validates, labelled COMPUTED MASK", () => {
     id: "AOI-32N-94E",
     polygon: [[94, 32], [96, 32], [96, 34], [94, 34], [94, 32]],
     max_magnitude: 5.2,
-    events: 3,
-    total_energy: 5070196799348.359,
+    events_used: 3,
+    total_energy_joules: 5070196799348.359,
   };
   const fc = buildGisGeoJson({
     aoi,
@@ -112,8 +113,8 @@ check("KML is a format conversion of the same GeoJSON, lon,lat order", () => {
     id: "AOI-32N-94E",
     polygon: [[94, 32], [96, 32], [96, 34], [94, 34], [94, 32]],
     max_magnitude: 5.2,
-    events: 3,
-    total_energy: 5070196799348.359,
+    events_used: 3,
+    total_energy_joules: 5070196799348.359,
   };
   const fc = buildGisGeoJson({
     aoi,
@@ -137,4 +138,52 @@ check("KML is a format conversion of the same GeoJSON, lon,lat order", () => {
   assert.throws(() => geoJsonToKml({ type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: [] } }] }), /does not support/);
 });
 
-console.log(`${passed}/7 gis-export tests PASS`);
+check("real makeAOI output carries event_count and total_energy_j (B1)", () => {
+  // Regression: GIS used to read aoi.events / aoi.total_energy,
+  // which makeAOI never emits, so a real AOI shipped with both
+  // fields absent. Feed a real makeAOI AOI and assert the
+  // properties are present and equal to the AOI's own fields.
+  const realAoi = makeAOI(fixtureTelemetry());
+  const fc = buildGisGeoJson({
+    aoi: realAoi,
+    maskBox: [776, 377, 831, 444],
+    maskPixels: 2197,
+    prompt: "snow",
+    model: "sam-3.1",
+    image,
+    imageSource: "Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12",
+  });
+  assert.equal(validateGisGeoJson(fc, image).length, 0);
+  const props = fc.features[0].properties;
+  assert.equal(props.event_count, realAoi.events_used);
+  assert.equal(props.total_energy_j, realAoi.total_energy_joules);
+  assert.equal(props.event_count, 3);
+  // Legacy spellings still accepted (recorded assets, blind
+  // harness), with identical output values.
+  const legacy = buildGisGeoJson({
+    aoi: { id: realAoi.id, polygon: realAoi.polygon, max_magnitude: realAoi.max_magnitude, events: 3, total_energy: realAoi.total_energy_joules },
+    maskBox: [776, 377, 831, 444],
+    maskPixels: 2197,
+    prompt: "snow",
+    model: "sam-3.1",
+    image,
+    imageSource: "Esri",
+  });
+  assert.equal(legacy.features[0].properties.event_count, 3);
+  assert.equal(legacy.features[0].properties.total_energy_j, realAoi.total_energy_joules);
+  // Neither spelling: fail closed, never silently drop the fields.
+  assert.throws(
+    () => buildGisGeoJson({
+      aoi: { id: realAoi.id, polygon: realAoi.polygon, max_magnitude: realAoi.max_magnitude },
+      maskBox: [776, 377, 831, 444],
+      maskPixels: 2197,
+      prompt: "snow",
+      model: "sam-3.1",
+      image,
+      imageSource: "Esri",
+    }),
+    /needs events_used/,
+  );
+});
+
+console.log(`${passed}/8 gis-export tests PASS`);

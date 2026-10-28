@@ -62,5 +62,43 @@ check("combined briefing passes with mask context", validateSparkBriefing(combin
   validateSparkBriefing(combinedGood, aoi, receipt, maskRecord).join("; "));
 check("combined briefing fails without mask context", validateSparkBriefing(combinedGood, aoi, receipt).length > 0);
 
+// B3 — free-text context numbers must NOT whitelist invented numbers.
+// Probe from the code walk: with a receipt carrying request_id
+// "qz-req-296740b69ea2" and fetch_ms 12345, and a mask record
+// whose image_source names the sub-bbox 94.9-95.3E, 33.1-33.5N
+// at zoom 12, the briefing below passed with ZERO failures
+// before the fix. Every number in it is invented (depth,
+// latency-as-fact, probability) and must now fail.
+const probeReceipt = { source: "quetzal-live", request_id: "qz-req-296740b69ea2", fetch_ms: 12345, fetched_at: "2026-10-26T00:00:00Z" };
+const probeMask = {
+  mask_label: "COMPUTED MASK",
+  model: "sam-3.1",
+  prompt: "snow",
+  image_source: "Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12, 1165x1394",
+  mask_pixels: 2197,
+  boxes: 1,
+  masks: 1,
+  box: [776, 377, 831, 444],
+};
+const probeText = `${good} AOI-32N-94E: depth 33.1 km, fetch took 12345 ms, probability 12 percent.`;
+{
+  const failures = validateSparkBriefing(probeText, aoi, probeReceipt, probeMask);
+  check("validator fails probe numbers from free-text context", failures.length > 0, failures.join("; "));
+  check("validator flags each invented probe number", ["33.1", "12345", "12"].every((n) => failures.some((f) => f.includes(n))),
+    failures.join("; "));
+}
+// Each free-text source on its own must not whitelist its numbers.
+check("validator fails image-source bbox number alone", validateSparkBriefing(`${good} The area spans 94.9 degrees.`, aoi, receipt, maskRecord).length > 0);
+check("validator fails fetch_ms number alone", validateSparkBriefing(`${good} The fetch took 12345 ms.`, aoi, probeReceipt, probeMask).length > 0);
+check("validator fails request-id number alone", validateSparkBriefing(`${good} Request 296740b69ea2 is on file.`, aoi, probeReceipt, probeMask).length > 0);
+// Legitimate numbers still pass: AOI fields, mask numeric fields,
+// box coordinates, and receipt time components — and only those.
+const legitWithContext = `${good} The COMPUTED MASK has ${maskRecord.mask_pixels} mask pixels, box ${JSON.stringify(maskRecord.box)}, recorded 2026-10-26.`;
+{
+  const failures = validateSparkBriefing(legitWithContext, aoi, receipt, maskRecord);
+  check("validator passes legitimate mask/box/receipt-time numbers", failures.length === 0, failures.join("; "));
+}
+check("validator fails invented date", validateSparkBriefing(`${good} Recorded 2027-01-01.`, aoi, receipt, maskRecord).length > 0);
+
 if (checks.some((c) => !c)) process.exit(1);
 console.log("Spark briefing tests PASS");

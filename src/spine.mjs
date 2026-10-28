@@ -34,6 +34,7 @@
 import { parseTelemetry, makeAOI, brief } from "./orchestrator.mjs";
 import { validateBriefing } from "./labels.mjs";
 import { validateSamResult, buildMaskRecord } from "./sam-bridge.mjs";
+import { normalizeSamRecord } from "./sam-record.mjs";
 import { buildGisGeoJson, validateGisGeoJson } from "./gis-export.mjs";
 import { buildSparkPrompt } from "./spark-briefing.mjs";
 import { buildVisualRecord, validateVisualRecord } from "./generated-visual.mjs";
@@ -106,24 +107,33 @@ export async function runSpine(input = {}) {
     {
       id: "sam-validate",
       run: () => {
-        const samFailures = validateSamResult(input.samResult);
+        // One home for SAM record shape handling: normalise the
+        // caller-supplied record (explicit CompletedOutcome /
+        // diagnostics-string translation, raw fields preserved),
+        // then validate the normalised record. A record that
+        // cannot be normalised fails this step; nothing is
+        // laundered into a PASS.
+        const { record: samResult, failures: normaliseFailures } = normalizeSamRecord(input.samResult);
+        if (!samResult) return { failures: normaliseFailures };
+        const samFailures = validateSamResult(samResult);
         if (samFailures.length > 0) return { failures: samFailures };
-        const maskRecord = buildMaskRecord(state.aoi.aoi, input.samResult);
-        return { maskRecord, failures: [] };
+        const maskRecord = buildMaskRecord(state.aoi.aoi, samResult);
+        return { maskRecord, samResult, failures: [] };
       },
       validate: (output) => output.failures,
     },
     {
       id: "gis-project",
       run: () => {
+        const samResult = state["sam-validate"].samResult;
         const geoJson = buildGisGeoJson({
           aoi: state.aoi.aoi,
-          maskBox: input.samResult.box,
-          maskPixels: input.samResult.mask_pixels,
-          prompt: input.samResult.prompt,
-          model: input.samResult.model,
+          maskBox: samResult.box,
+          maskPixels: samResult.mask_pixels,
+          prompt: samResult.prompt,
+          model: samResult.model,
           image: input.image,
-          imageSource: input.samResult.image_source,
+          imageSource: samResult.image_source,
         });
         const gisFailures = validateGisGeoJson(geoJson, input.image);
         return { geoJson, failures: gisFailures };

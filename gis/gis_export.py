@@ -193,6 +193,28 @@ def build_gis_geojson(*, aoi, mask_box, mask_pixels, prompt, model, image, image
         raise ValueError("gis-export: AOI polygon is required")
     if not isinstance(mask_box, (list, tuple)):
         raise ValueError("gis-export: mask box is required")
+    # B1 fix: makeAOI emits events_used / total_energy_joules; older
+    # hand-built AOIs (and the recorded assets) use events /
+    # total_energy. Accept the real shape first, fall back to the
+    # legacy spelling, and fail closed if neither is present —
+    # never silently ship an AOI feature with the fields dropped,
+    # and never raise a bare KeyError on the real AOI shape.
+    if "events_used" in aoi:
+        event_count = aoi["events_used"]
+    elif "events" in aoi:
+        event_count = aoi["events"]
+    else:
+        raise ValueError(
+            "gis-export: AOI needs events_used (makeAOI) or events"
+        )
+    if "total_energy_joules" in aoi:
+        total_energy = aoi["total_energy_joules"]
+    elif "total_energy" in aoi:
+        total_energy = aoi["total_energy"]
+    else:
+        raise ValueError(
+            "gis-export: AOI needs total_energy_joules (makeAOI) or total_energy"
+        )
     mask_polygon = box_to_polygon(mask_box, image)
     centroid = box_centroid(mask_box, image)
     return {
@@ -206,8 +228,8 @@ def build_gis_geojson(*, aoi, mask_box, mask_pixels, prompt, model, image, image
                     "label": "computed",
                     "crs": "EPSG:4326",
                     "max_magnitude": aoi["max_magnitude"],
-                    "event_count": aoi["events"],
-                    "total_energy_j": aoi["total_energy"],
+                    "event_count": event_count,
+                    "total_energy_j": total_energy,
                 },
                 "geometry": {"type": "Polygon", "coordinates": [aoi["polygon"]]},
             },

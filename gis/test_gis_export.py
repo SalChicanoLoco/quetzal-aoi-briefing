@@ -54,8 +54,11 @@ NAGQU_AOI = {
     "id": "AOI-32N-94E",
     "polygon": [[94, 32], [96, 32], [96, 34], [94, 34], [94, 32]],
     "max_magnitude": 5.2,
-    "events": 3,
-    "total_energy": 5070196799348.359,
+    # Real makeAOI spellings (B1): events_used / total_energy_joules.
+    # The legacy events / total_energy spellings are still accepted
+    # by build_gis_geojson, but tests must use the real shape.
+    "events_used": 3,
+    "total_energy_joules": 5070196799348.359,
 }
 
 # Fiji z12 sidecar: bbox -178.6 to -178.2, -18.5 to -18.1, zoom 12,
@@ -150,8 +153,17 @@ class TestPixelMath(unittest.TestCase):
             close(actual[1], expected[1], 1e-6, "Fiji crop lat")
 
     def test_sidecar_builds_nagqu_image(self):
-        sidecar_path = Path(__file__).resolve().parent.parent.parent / (
-            "nagqu-satellite-z12-snowpatch.png.json"
+        # Sidecar fixture checked into the repo (gis/fixtures/),
+        # resolved relative to this test file. It used to be read
+        # from two levels above the repo root
+        # (~/workspace/hackathon/nagqu-satellite-z12-snowpatch.png.json),
+        # which exists only in the starter layout on disk — a fresh
+        # clone failed with FileNotFoundError. Never read outside
+        # the repo root from a test.
+        sidecar_path = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "nagqu-satellite-z12-snowpatch.json"
         )
         sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
         image = image_from_sidecar(sidecar)
@@ -233,6 +245,57 @@ class TestOutputs(unittest.TestCase):
         bad = copy.deepcopy(fc)
         bad["features"][1]["geometry"]["coordinates"][0][0] = [0, 0]
         self.assertGreater(len(validate_gis_geojson(bad, NAGQU_IMAGE)), 0)
+
+    def test_real_makeaoi_shape_carries_event_count_and_energy(self):
+        # B1 regression: build_gis_geojson used to do aoi["events"] /
+        # aoi["total_energy"], which makeAOI never emits, so it raised
+        # KeyError on a real AOI. The real (makeAOI) shape must carry
+        # event_count / total_energy_j, the legacy spellings must
+        # still work with identical values, and neither spelling
+        # must fail closed instead of silently dropping the fields.
+        fc = build_gis_geojson(
+            aoi=NAGQU_AOI,
+            mask_box=[776, 377, 831, 444],
+            mask_pixels=2197,
+            prompt="snow",
+            model="sam-3.1",
+            image=NAGQU_IMAGE,
+            image_source="Esri World Imagery, sub-bbox 94.9-95.3E, 33.1-33.5N, zoom 12",
+        )
+        props = fc["features"][0]["properties"]
+        self.assertEqual(props["event_count"], 3)
+        self.assertEqual(props["total_energy_j"], 5070196799348.359)
+        legacy = dict(NAGQU_AOI)
+        legacy["events"] = legacy.pop("events_used")
+        legacy["total_energy"] = legacy.pop("total_energy_joules")
+        fc_legacy = build_gis_geojson(
+            aoi=legacy,
+            mask_box=[776, 377, 831, 444],
+            mask_pixels=2197,
+            prompt="snow",
+            model="sam-3.1",
+            image=NAGQU_IMAGE,
+            image_source="Esri",
+        )
+        self.assertEqual(
+            fc_legacy["features"][0]["properties"],
+            fc["features"][0]["properties"],
+        )
+        bare = {
+            "id": "AOI-32N-94E",
+            "polygon": [[94, 32], [96, 32], [96, 34], [94, 34], [94, 32]],
+            "max_magnitude": 5.2,
+        }
+        with self.assertRaisesRegex(ValueError, "needs events_used"):
+            build_gis_geojson(
+                aoi=bare,
+                mask_box=[776, 377, 831, 444],
+                mask_pixels=2197,
+                prompt="snow",
+                model="sam-3.1",
+                image=NAGQU_IMAGE,
+                image_source="Esri",
+            )
 
     def test_geojson_matches_recorded_asset(self):
         asset_path = (
